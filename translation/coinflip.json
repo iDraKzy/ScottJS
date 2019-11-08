@@ -1,0 +1,46 @@
+{
+    "head": {
+        "fr": "Face",
+        "en": "Head"
+    },
+    "tail": {
+        "fr": "Pile",
+        "en": "Tail"
+    },
+    "errorFlip": {
+        "fr": ":x: Lancer de pièce",
+        "en": ":x: Coin flip"
+    },
+    "flipName": {
+        "fr": "Lancer de pièce pour {{name}}",
+        "en": "{{name}}'s coin flip"
+    },
+    "notEnough": {
+        "fr": "Vous n'avez pas assez de :gem:",
+        "en": "You don't have enough :gem:"
+    },
+    "wallet": {
+        "fr": "Portemonnaie",
+        "en": "Wallet"
+    },
+    "betOn": {
+        "fr": "Vous avez misé sur",
+        "en": "You placed your bet on"
+    },
+    "bet": {
+        "fr": "Vous avez misé",
+        "en": "You bet"
+    },
+    "won": {
+        "fr": ":white_check_mark: Vous avez gagné",
+        "en": ":white_check_mark: You won"
+    },
+    "lost": {
+        "fr": ":x: Vous avez perdu",
+        "en": ":x: You lost"
+    },
+    "newBalance": {
+        "fr": "Nouveau solde",
+        "en": "New balance"
+    }
+}

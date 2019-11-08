@@ -1,0 +1,26 @@
+{
+    "dateFormat": {
+        "fr": "DD/MM/YYYY [à] HH:mm:ss",
+        "en": "MM/DD/YYYY [at] HH:mm:ss"
+    },
+    "requested": {
+        "fr": "Demandé le",
+        "en": "Requested the"
+    },
+    "rewardNameEmoji": {
+        "fr": "{{emoji}} Récompense journalière de {{name}}",
+        "en": "{{emoji}} {{name}}'s daily reward"
+    },
+    "gemReward": {
+        "fr": "Vous avez reçu vos {{gem}} :gem: journalières",
+        "en": "You received your {{gem}} daily :gem:"
+    },
+    "gem": {
+        "fr": "Vos gemmes",
+        "en": "Your gems"
+    },
+    "alreadyReceived": {
+        "fr": "Vous avez déjà reçu votre récompense aujourd'hui. \n\n Vous pourrez la redemander dans",
+        "en": "You already received your daily reward today. \n\n You can claim it again in"
+    }
+}

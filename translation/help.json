@@ -1,0 +1,50 @@
+{
+    "dateFormat": {
+        "fr": "DD[/]MM[/]YYYY [à] HH[:]mm[:]ss",
+        "en": "MM[/]DD[/]YYYY [at] HH[:]mm[:]ss"
+    },
+    "availableCommand": {
+        "fr": "Liste des commandes dispo de",
+        "en": "Available commands of"
+    },
+    "reactWith": {
+        "fr": "Réagissez avec l'emoji de la catégorie pour obtenir plus d'infos",
+        "en": "React with the category's emoji to get more informations"
+    },
+    "stopReact": {
+        "fr": "Ce message cessera de réagir aux réaction dans 3 minutes",
+        "en": "This message will cease to react to reactions in 3 minutes"
+    },
+    "categoryInfo": {
+        "fr": "Informations pour la catégorie",
+        "en": "Information for the category"
+    },
+    "commandInfo": {
+        "fr": "Information sur la commande",
+        "en": "Information for the command"
+    },
+    "requested": {
+        "fr": "Demandé le",
+        "en": "Requested the"
+    },
+    "usage": {
+        "fr": "Utilisation",
+        "en": "Usage"
+    },
+    "moreInfo": {
+        "fr": "Informations supplémentaires",
+        "en": "More infos"
+    },
+    "examples": {
+        "fr": "Exemples",
+        "en": "Examples"
+    },
+    "getInfo": {
+        "fr": "Utilisez \"!help\" [commande] pour avoir des infos sur une commande",
+        "en": "Use \"!help\" [command] to get more informations about a command"
+    },
+    "addMe": {
+        "fr": "[**Ajoutez moi à votre serveur**](https://discordapp.com/api/oauth2/authorize?client_id=628022462164107269&permissions=1609952342&scope=bot)",
+        "en": "[**Add me to your server**](https://discordapp.com/api/oauth2/authorize?client_id=628022462164107269&permissions=1609952342&scope=bot)"
+    }
+}
