@@ -54,6 +54,7 @@ bot.on("ready", () => {
         }
     })
 
+
     //Handle Reminder
 
     const reminderCollection = mongoUtil.getDb().collection("reminders")
@@ -167,4 +168,12 @@ bot.on("message", async message => {
 bot.login(botSettings.token)
     .then(r => console.log("Bot connected"))
     .catch(e => console.log(e))
+
+setTimeout(() => {
+    if (bot.status !== 0) {
+        err = "Connection issue with discord"
+        throw err
+    }
+}, 10000)
+
 module.exports.bot = bot
