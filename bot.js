@@ -133,7 +133,7 @@ bot.on("guildMemberAdd", async member => {
     const guildCollection = await db.collection('guilds')
     let guildDoc = await guildCollection.findOne({guild_id: member.guild.id})
     let bypassGlobalBans = guildDoc["bypassGlobalBans"] //get the admin channel of the guild if on
-    if (!userDoc.isGlobalBanned && !bypassGlobalBans) {
+    if (userDoc.isGlobalBanned && !bypassGlobalBans) {
         const banEmbed = new RichEmbed()
             .setTitle(`:warning: Vous avez été banni de ${member.guild.name}`)
             .setDescription(`Vous avez été banni par <@${bot.user.id}>`)
@@ -142,7 +142,7 @@ bot.on("guildMemberAdd", async member => {
             .addField("Durée", "Permanent")
         let message = member.send(banEmbed)
         bot.registry.commands.get("ban").run(message, { user: member, reason: "Global Banned...", guild: member.guild })
-    } else if (!userDoc.isGlobalBanned && bypassGlobalBans) {
+    } else if (userDoc.isGlobalBanned && bypassGlobalBans) {
         let adminChannel = guildDoc["adminChannel"] //get the admin channel of the guild if on
         const banEmbedAdmin = new RichEmbed()
         .setDescription(`:warning: <@${member.id}> est un utilisateur à risques! Faites attention <@${member.guild.owner.id}>`)
