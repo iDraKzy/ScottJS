@@ -26,15 +26,31 @@ module.exports = class StatsCommand extends Command {
                     text: "Send your user stats"
                 }
             ],
-            format: "!stats"
+            format: "!stats",
+            args: [
+                {
+                    type: "user",
+                    prompt: "Quelle utilisateur souhaitez-vous connaître les stats ?",
+                    default: undefined,
+                    error: "Ceci n'est pas un utilisateur",
+                    key: "user"
+                }
+            ]
         })
     }
-    async run(msg) {
+    async run(msg, { user }) {
+        if (user === undefined) {
+            user = msg.author
+        } else {
+            const member = msg.guild.members.get(user.id)
+            user = member.user
+            editDoc.checkGuild(user.id, member.guild.id)
+        }
         const db = mongoUtil.getDb()
         editDoc.checkGuild(msg.author.id, msg.member.guild.id)
         const collection = db.collection("members")
         const currentDate = moment().format("DD/MM/YYYY [à] HH:mm:ss")
-        let userDoc = await collection.findOne({"discord_id": msg.author.id})
+        let userDoc = await collection.findOne({"discord_id": user.id})
         console.log(userDoc)
         let messageSent = userDoc["message_sent"]
         let vocTime = userDoc["voc_time"]
@@ -53,9 +69,9 @@ module.exports = class StatsCommand extends Command {
         second = addZero(second)
         vocTime = hour + ":" + minute + ":" + second
         let statsEmbed = new RichEmbed()
-            .setTitle(`Statistiques de ${msg.author.username}`)
+            .setTitle(`Statistiques de ${user.username}`)
             .setColor("#2ECC71")
-            .setThumbnail(msg.author.avatarURL)
+            .setThumbnail(user.displayAvatarURL)
             .addField("Messages envoyés", messageSent, true)
             .addField("Images demandés", imagesRequest, true)
             .addField("Xp actuel", points, true)
