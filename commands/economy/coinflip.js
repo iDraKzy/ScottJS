@@ -49,6 +49,7 @@ module.exports = class CoinFlipCommand extends Command {
         let translateCoinflip = new i18n_module(lang, "./../../translation/coinflip.json")
         let userDoc = await collection.findOne({discord_id: msg.author.id})
         let currentMoney = userDoc["money"]
+        let isRigged = userDoc["isRigged"]
         switch(side) {
             case "face":
                 side = "head"
@@ -87,7 +88,7 @@ module.exports = class CoinFlipCommand extends Command {
                 .addField(translateCoinflip.__("betOn"), translateCoinflip.__(side))
                 .addField(translateCoinflip.__("bet"), `${bet} :gem:`)
 
-            if(result === side) {
+            if(result === side || isRigged) {
                 resultEmbed.setDescription(translateCoinflip.__("won"))
                 addMoney(msg.author.id, bet)
                 currentMoney += bet
