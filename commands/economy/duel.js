@@ -42,26 +42,34 @@ module.exports = class DuelCommand extends Command {
     }
 
     async run(msg, { user, amount }) {
+
+        //Check if both user are different
+        if (msg.user.id === user.id) {
+            const sameUserError = new RichEmbed()
+                .setTitle(`${this.client.emojis.get("589793004965855272")} Vous ne pouvez pas vous provoquer en duel vous-même`)
+                .setDescription("Duel annulé")
+                .setColor("#E74C3C")
+                .setThumbnail(msg.author.displayAvatarURL)
+            return msg.say(sameUserError)
+        }
         user = msg.guild.members.get(user.id).user
+
         //Check if both user has enough
         const checkMoneySender = await checkMoney(msg.author.id, amount)
         const checkMoneyReceiver = await checkMoney(user.id, amount)
-        console.log(checkMoneySender)
-        console.log(checkMoneyReceiver)
         let notEnoughMoneyEmbed = new RichEmbed()
-            .setTitle(`:x: Vous n'avez pas assez de :gem:`)
+            .setTitle(`${this.client.emojis.get("589793004965855272")} Vous n'avez pas assez de :gem:`)
             .setColor("#E74C3C")
         if (checkMoneySender[0] === false) { //check if sender has enough
             notEnoughMoneyEmbed.setThumbnail(msg.author.displayAvatarURL)
                 .addField("Solde", `${checkMoneySender[1]} :gem:`)
-            msg.say(notEnoughMoneyEmbed)
-            return
+            return msg.say(notEnoughMoneyEmbed)
         } else if (checkMoneyReceiver[0] === false) { //check if receiver has enough
             notEnoughMoneyEmbed.setThumbnail(user.displayAvatarURL)
                 .addField("Solde", `${checkMoneyReceiver[1]} :gem:`)
-            msg.say(notEnoughMoneyEmbed)
-            return
+            return msg.say(notEnoughMoneyEmbed)
         }
+
         //if check ok, wait for receiver answer
         const awaitDuelEmbed = new RichEmbed()
             .setTitle(`Vous avez provoqué ${user.username} en duel`)
@@ -71,6 +79,7 @@ module.exports = class DuelCommand extends Command {
             .setFooter(`Duel provoqué le ${moment().format("DD/MM/YYYY [à] HH:mm:ss")}`)
         msg.say(awaitDuelEmbed)
         const filter = m => m.author.id === user.id && m.content.startsWith("!accept")
+
         //Collector to check if the receiver accept
         let collector = msg.channel.createCollector(filter, { time: 15000})
         collector.on("collect", async element => {
@@ -82,17 +91,20 @@ module.exports = class DuelCommand extends Command {
                 .addField("Somme en jeu", `${amount} :gem:`)
             msg.say(duelRules)
             setTimeout(() => {
+
                 //Start message
                 const duelStart = new RichEmbed()
                     .setTitle(`${this.client.emojis.get("632686188704301142")} Le premier à envoyer un message à partir de maintenant gagne le duel`)
                     .setDescription("Que puisse le sort vous être favorable")
                     .setFooter(`Duel démarré à ${moment().format("DD/MM/YYYY [à] HH:mm:ss")}`)
                 msg.say(duelStart)
+
                 //Get message
                 const filterAwait = m => (m.author.id === msg.author.id || m.author.id === user.id)
                 let winner, loser
                 msg.channel.awaitMessages(filterAwait, { max: 1 })
                     .then(collected => {
+
                         //Define the winner
                         const messageReceived = collected.array()[0]
                         if (messageReceived.author.id === msg.author.id) {
@@ -102,6 +114,7 @@ module.exports = class DuelCommand extends Command {
                             winner = user
                             loser = msg.author
                         }
+
                         //Declare the winner
                         const winEmbed = new RichEmbed()
                             .setTitle(`Félicitation ${winner.username} vous avez gagné`)
@@ -111,12 +124,14 @@ module.exports = class DuelCommand extends Command {
                             .setColor("#3498DB")
                             .setFooter(`Duel terminé le ${moment().format("DD/MM/YYYY [à] HH:mm:ss")}`)
                         msg.say(winEmbed)
+
                         //give and remove gems
                         addMoney(winner.id, amount)
                         addMoney(loser.id, -(amount))
             })
         }, Math.floor(Math.random() * (5000 - 2000) + 2000))
     })
+    
             //Generate the embed declaring the winner
         collector.on("end", (collected, reason) => {
             if (reason !== "confirmation") {
