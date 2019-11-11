@@ -46,6 +46,8 @@ module.exports = class DuelCommand extends Command {
         //Check if both user has enough
         const checkMoneySender = await checkMoney(msg.author.id, amount)
         const checkMoneyReceiver = await checkMoney(user.id, amount)
+        console.log(checkMoneySender)
+        console.log(checkMoneyReceiver)
         let notEnoughMoneyEmbed = new RichEmbed()
             .setTitle(`:x: Vous n'avez pas assez de :gem:`)
             .setColor("#E74C3C")
