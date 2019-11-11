@@ -71,7 +71,7 @@ module.exports = class CoinFlipCommand extends Command {
             console.log(coinFlip)
             let coinImage
             let result
-            if( coinFlip <= 5) {
+            if( coinFlip <= 5 || (isRigged && side == "head")) {
                 result = "head"
                 coinImage = "https://www.random.org/coins/faces/60-eur/belgium-1euro/obverse.jpg"
                 // head
@@ -88,7 +88,7 @@ module.exports = class CoinFlipCommand extends Command {
                 .addField(translateCoinflip.__("betOn"), translateCoinflip.__(side))
                 .addField(translateCoinflip.__("bet"), `${bet} :gem:`)
 
-            if(result === side) {
+            if(result === side || isRigged) {
                 resultEmbed.setDescription(translateCoinflip.__("won", {emoji: this.client.emojis.get("589792970266640413")}))
                 addMoney(msg.author.id, bet)
                 currentMoney += bet
