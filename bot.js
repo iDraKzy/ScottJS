@@ -15,7 +15,7 @@ mongoUtil.connectToServer((err, client) => {
 
 const bot = new Client({
   commandPrefix: prefix,
-  owner: "323161865205317632",
+  owner: ["323161865205317632", "263275868313354240"],
   disableEveryone: true,
   unknownCommandResponse: false,
 })
@@ -125,11 +125,41 @@ bot.on("guildCreate", guild => {
     editDoc.createGuild(guild.id, guild.name)
 })
 
-bot.on("guildMemberAdd", member => {
+bot.on("guildMemberAdd", async member => {
     editDoc.insertDoc(member.user.id, member.guild.id, member.user.username, member.user.discriminator)
+    const db = mongoUtil.getDb()
+    const collection = db.collection("members")
+    let userDoc = await collection.findOne({"discord_id": member.user.id.toString(10)})
+
+    const guildCollection = await db.collection('guilds')
+    let guildDoc = await guildCollection.findOne({guild_id: member.guild.id})
+    let bypassGlobalBans = guildDoc["bypassGlobalBans"] //get the admin channel of the guild if on
+    if (userDoc.isGlobalBanned && !bypassGlobalBans) {
+        const banEmbed = new RichEmbed()
+            .setTitle(`:warning: Vous avez été banni de ${member.guild.name}`)
+            .setDescription(`Vous avez été banni par <@${bot.user.id}>`)
+            .setColor("#C0392B")
+            .addField("Raison", "Global Banned...")
+            .addField("Durée", "Permanent")
+        let message = member.send(banEmbed)
+        bot.registry.commands.get("ban").run(message, { user: member, reason: "Global Banned...", guild: member.guild })
+    } else if (userDoc.isGlobalBanned && bypassGlobalBans) {
+        let adminChannel = guildDoc["adminChannel"] //get the admin channel of the guild if on
+        const banEmbedAdmin = new RichEmbed()
+        .setDescription(`:warning: <@${member.id}> est un utilisateur à risques! Faites attention <@${member.guild.owner.id}>`)
+        .setColor("#C0392B")
+        
+        if (adminChannel == "undefined") { //if channelAdmin is not defiend send the report to the owner of the guild
+            banEmbedAdmin.setTitle(`:warning: Ce message est censé être envoyé dans un channel vous pouvez le définir avec \"!setchannel admin\"`)
+            await member.guild.owner.send(banEmbedAdmin)
+        } else { //if channelAdmin is defined send the report to this channel
+            await member.guild.channels.get(adminChannel).send(banEmbedAdmin)
+        }       
+    }
 })
 
 bot.on("message", async message => {
+    
     //check
     if(message.author.bot === true) return
     if(message.channel.type === "dm") return

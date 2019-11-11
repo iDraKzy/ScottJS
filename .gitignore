@@ -60,4 +60,6 @@ typings/
 
 # next.js build output
 .next
+
+botsettings.json
 scott.code-workspace
