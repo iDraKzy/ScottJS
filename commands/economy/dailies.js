@@ -53,7 +53,7 @@ module.exports = class DailiesCommand extends Command {
             await msg.say(dailiesEmbed)
         } else {
             let timePassed = currentDate - lastDailies
-            let timeLeft = ms(cooldown - timePassed)
+            let timeLeft = ms(1000 * 60 * 60 * 22 - timePassed)
             let timeLeftDisplay = moment().set({'hour': timeLeft.hours, 'minute': timeLeft.minutes, 'second': timeLeft.seconds}).format("HH:mm:ss")
             let dailiesFailEmbed = new RichEmbed ()
                 .setTitle(translateDailies.__("rewardNameEmoji", {name: msg.author.username, emoji: this.client.emojis.get("589793004965855272")}))
