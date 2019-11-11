@@ -77,7 +77,7 @@ module.exports = class DuelCommand extends Command {
                 .setColor("#3498DB")
                 .setDescription("Le premier à envoyer un message à partir de maintenant sera déclarer gagnant")
                 .addField("Somme en jeu", `${amount} :gem:`)
-            msg.say(duelRules)
+            await msg.say(duelRules)
             const filterAwait = m => m.author.id === msg.author.id && m.author.id === user.id
             let winner, loser
             //Define the winner
