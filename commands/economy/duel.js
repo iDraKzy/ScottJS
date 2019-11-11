@@ -46,8 +46,6 @@ module.exports = class DuelCommand extends Command {
         //Check if both user has enough
         const checkMoneySender = await checkMoney(msg.author.id, amount)
         const checkMoneyReceiver = await checkMoney(user.id, amount)
-        console.log(checkMoneySender)
-        console.log(checkMoneyReceiver)
         let notEnoughMoneyEmbed = new RichEmbed()
             .setTitle(`:x: Vous n'avez pas assez de :gem:`)
             .setColor("#E74C3C")
@@ -71,36 +69,46 @@ module.exports = class DuelCommand extends Command {
             .setFooter(`Duel provoqué le ${moment().format("DD/MM/YYYY [à] HH:mm:ss")}`)
         msg.say(awaitDuelEmbed)
         const filter = m => m.author.id === user.id && m.content.startsWith("!accept")
-        //Collector to check if the
+        //Collector to check if the receiver accept
         let collector = msg.channel.createCollector(filter, { time: 15000})
         collector.on("collect", element => {
-            const selectRandom =  Math.round(Math.random() * 2)
-            let winner, loser
-            //Define the winnner and the loser
-            if (selectRandom === 0) {
-                winner = msg.author
-                loser = user
-            } else {
-                winner = user
-                loser = msg.author
-            }
-            //Generate the embed declaring the winner
-            const winEmbed = new RichEmbed()
-                .setTitle(`Félicitation ${winner.username} vous avez gagné`)
-                .setDescription(`:white_check_mark: ${winner.username} vous remportez ${amount} :gem:\n\n\
-                :x: ${loser.username} vous perdez ${amount} :gem:`)
-                .setThumbnail(winner.displayAvatarURL)
+            const duelRules = new RichEmbed()
+                .setTitle(`${this.client.emojis.get("589792970266640413")} Duel accepté`)
                 .setColor("#3498DB")
-                .setFooter(`Duel effectué le ${moment().format("DD/MM/YYYY [à] HH:mm:ss")}`)
-            msg.say(winEmbed)
-            addMoney(winner.id, amount)
-            addMoney(loser.id, -(amount))
-            collector.stop("confirmation")
+                .setDescription("Le premier à envoyer un message à partir de maintenant sera déclarer gagnant")
+                .addField("Somme en jeu", `${amount} :gem:`)
+            msg.say(duelRules)
+            const filterAwait = m => m.author.id === msg.author.id && m.author.id === user.id
+            let winner, loser
+            //Define the winner
+            msg.channel.awaitMessages(filterAwait, { max: 1 })
+                .then(collected => {
+                    const messageReceived = collected.array()[0]
+                    if (messageReceived.author.id === msg.author.id) {
+                        winner = msg.author
+                        loser = user
+                    } else {
+                        winner = user
+                        loser = msg.author
+                    }
+                    const winEmbed = new RichEmbed()
+                        .setTitle(`Félicitation ${winner.username} vous avez gagné`)
+                        .setDescription(`${this.client.emojis.get("589792970266640413")} ${winner.username} vous remportez ${amount} :gem:\n\n\
+                        ${this.client.emojis.get("589793004965855272")} ${loser.username} vous perdez ${amount} :gem:`)
+                        .setThumbnail(winner.displayAvatarURL)
+                        .setColor("#3498DB")
+                        .setFooter(`Duel effectué le ${moment().format("DD/MM/YYYY [à] HH:mm:ss")}`)
+                    msg.say(winEmbed)
+                    addMoney(winner.id, amount)
+                    addMoney(loser.id, -(amount))
+                    collector.stop("confirmation")
+            })
         })
+            //Generate the embed declaring the winner
         collector.on("end", (collected, reason) => {
             if (reason !== "confirmation") {
                 const timeoutEmbed = new RichEmbed()
-                    .setTitle(`:x: ${user.username} n'a pas répondu`)
+                    .setTitle(`${this.client.emojis.get("589793004965855272")} ${user.username} n'a pas répondu`)
                     .setColor("#E74C3C")
                     .setDescription("Duel annulé")
                     .setThumbnail(user.displayAvatarURL)
