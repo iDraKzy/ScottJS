@@ -126,14 +126,15 @@ bot.on("guildCreate", guild => {
 })
 
 bot.on("guildMemberAdd", async member => {
-    editDoc.insertDoc(member.user.id, member.guild.id, member.user.username, member.user.discriminator)
-    const db = mongoUtil.getDb()
-    const collection = db.collection("members")
-    let userDoc = await collection.findOne({"discord_id": member.user.id.toString(10)})
+    const collection = mongoUtil.getDb().collection("members")
+    const userDoc = await collection.findOne({"discord_id": member.user.id.toString(10)})
+    if (userDoc === null) {
+        editDoc.insertDoc(member.user.id, member.guild.id, member.user.username, member.user.discriminator)
+    }
 
     const guildCollection = await db.collection('guilds')
-    let guildDoc = await guildCollection.findOne({guild_id: member.guild.id})
-    let bypassGlobalBans = guildDoc["bypassGlobalBans"] //get the admin channel of the guild if on
+    const guildDoc = await guildCollection.findOne({guild_id: member.guild.id})
+    const bypassGlobalBans = guildDoc["bypassGlobalBans"] //get the admin channel of the guild if on
     if (userDoc.isGlobalBanned && !bypassGlobalBans) {
         const banEmbed = new RichEmbed()
             .setTitle(`:warning: Vous avez été banni de ${member.guild.name}`)
