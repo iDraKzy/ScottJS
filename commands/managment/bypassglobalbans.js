@@ -48,7 +48,7 @@ module.exports = class BypassCommand extends Command {
         }
         guildCollection.updateOne({guild_id: guild}, {$set: { bypassGlobalBans: state}})
         const changeLanguageEmbed = new RichEmbed()
-            .setTitle(`:white_check_mark: Les Global Bans ${display}`)
+            .setTitle(`${this.client.emojis.get("589792970266640413")} Les Global Bans ${display}`)
             .setColor("#34495E")
             .setThumbnail(msg.author.displayAvatarURL)
             .setFooter(`Effectué le ${currentTime}`)

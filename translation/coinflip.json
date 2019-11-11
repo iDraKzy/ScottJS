@@ -32,12 +32,12 @@
         "en": "You bet"
     },
     "won": {
-        "fr": ":white_check_mark: Vous avez gagné",
-        "en": ":white_check_mark: You won"
+        "fr": "{{emoji}} Vous avez gagné",
+        "en": "{{emoji}} You won"
     },
     "lost": {
-        "fr": ":x: Vous avez perdu",
-        "en": ":x: You lost"
+        "fr": "{{emoji}} Vous avez perdu",
+        "en": "{{emoji}} You lost"
     },
     "newBalance": {
         "fr": "Nouveau solde",

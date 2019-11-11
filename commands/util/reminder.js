@@ -84,7 +84,7 @@ module.exports = class ReminderCommand extends Command {
         reminderCollection.insertOne(query)
             .then(() => {
                 const reminderEmbed = new RichEmbed()
-                    .setTitle(":white_check_mark: Rappel créer avec succès")
+                    .setTitle(`${this.client.emojis.get("589792970266640413")} Rappel créer avec succès`)
                     .setThumbnail(msg.author.displayAvatarURL)
                     .setColor("#3498DB")
                     .setDescription("Un message vous sera envoyé lorsque ce temps sera écoulé")
@@ -95,9 +95,9 @@ module.exports = class ReminderCommand extends Command {
             })
             .catch(e => {
                 const reminderError = new RichEmbed()
-                    .setTitle(":x: Une erreur est survenue lors de l'ajout de votre rappel à la base de donnée")
+                    .setTitle(`${this.client.emojis.get("589793004965855272")} Une erreur est survenue lors de l'ajout de votre rappel à la base de donnée`)
                     .setColor("#E74C3C")
-                    .setDescription("Contactez iDraKz#1760")
+                    .setDescription("Contactez iDraKz#1760 ou Heyoxe#0557")
                     .addField("Description de l'erreur", e)
                 msg.say(reminderError)
             })
