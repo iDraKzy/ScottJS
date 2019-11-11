@@ -60,4 +60,4 @@ typings/
 .next
 
 botsettings.json
-scott.code-workspace
+.idea/*

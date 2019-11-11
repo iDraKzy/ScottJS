@@ -71,7 +71,7 @@ module.exports = class ReportCommand extends Command {
             messageCollector.on("collect", (collected) => {
                 if(collected.content.match(/<@(\d){1,}>/)) { //check if the message is an id
                     reportedID = collected.content.toString().replace(/\D/g, '')
-                    IDReceivedEmbed.setTitle(`:white_check_mark: Utilisateur reporté reçu (${reportGuild.members.get(reportedID).user.username})`)
+                    IDReceivedEmbed.setTitle(`${this.client.emojis.get("589792970266640413")} Utilisateur reporté reçu (${reportGuild.members.get(reportedID).user.username})`)
                     createdChannel.send(IDReceivedEmbed)
                 } else if (collected.content === "confirmer") { //if the message is "confirmer" send the report
                     messageCollector.stop("confirmed")
@@ -105,13 +105,13 @@ module.exports = class ReportCommand extends Command {
             let adminChannel = guildDoc["adminChannel"] //get the admin channel of the guild if on
             let messageSent
             const reportEmbed = new RichEmbed()
-                .setTitle(":white_check_mark: Nouveau rapport")
+                .setTitle(`${bot.emojis.get("589792970266640413")} Nouveau rapport`)
                 .setColor("#34495E")
                 .addField("Utilisateur reporté", `<@${reportedID}>`)
                 .addField("Raison", reportReason)
                 .setFooter("⛔ : Bannir ; 🚫 : éjecter ; 📨 : Envoyer un rapport à notre équipe (Répond aux réactions pendant une journée)")
             if (adminChannel == "undefined") { //if channelAdmin is not defiend send the report to the owner of the guild
-                reportEmbed.setDescription(`Rapport rédigé par <@${reporterID}>\n\n:warning: Ce message est censé être envoyé dans un channel vous pouvez le définir avec \"!setadminchannel\"`)
+                reportEmbed.setDescription(`Rapport rédigé par <@${reporterID}>\n\n${bot.emojis.get("632686188704301142")} Ce message est censé être envoyé dans un channel vous pouvez le définir avec \"!setadminchannel\"`)
                 messageSent = await reportGuild.owner.send(reportEmbed)
             } else { //if channelAdmin is defined send the report to this channel
                 reportEmbed.setDescription(`Rapport rédigé par <@${reporterID}>`)

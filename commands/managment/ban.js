@@ -46,13 +46,13 @@ module.exports = class BanCommand extends Command {
             let guildDoc = await guildCollection.findOne({guild_id: guild.id})
             let adminChannel = guildDoc["adminChannel"] //get the admin channel of the guild if on
             const banEmbedAdmin = new RichEmbed()
-            .setDescription(`:warning: <@${user.id}> à été banni de ${guild.name}`)
+            .setDescription(`${this.client.emojis.get("632686188704301142")} <@${user.id}> à été banni de ${guild.name}`)
             .setColor("#C0392B")
             .addField("Raison", reason)
             .addField("Durée", "Permanent")
             
             if (adminChannel == "undefined") { //if channelAdmin is not defiend send the report to the owner of the guild
-                banEmbedAdmin.setTitle(`Bannissement automatique\n\n:warning: Ce message est censé être envoyé dans un channel vous pouvez le définir avec \"!setchannel admin\"`)
+                banEmbedAdmin.setTitle(`Bannissement automatique\n\n${this.client.emojis.get("632686188704301142")} Ce message est censé être envoyé dans un channel vous pouvez le définir avec \"!setchannel admin\"`)
                 await guild.owner.send(banEmbedAdmin)
             } else { //if channelAdmin is defined send the report to this channel
                 await guild.channels.get(adminChannel).send(banEmbedAdmin)
@@ -64,7 +64,7 @@ module.exports = class BanCommand extends Command {
             user = guild.members.get(user)
             user.ban({days: 7, reason: reason})
             const banEmbed = new RichEmbed()
-                .setTitle(`:warning: Vous avez été banni de ${guild.name}`)
+                .setTitle(`${this.client.emojis.get("632686188704301142")} Vous avez été banni de ${guild.name}`)
                 .setDescription(`Vous avez été banni par <@${msg.author.id}>`)
                 .setColor("#C0392B")
                 .addField("Raison", reason)
