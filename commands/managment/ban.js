@@ -1,5 +1,6 @@
 const { Command } = require('discord.js-commando')
 const { RichEmbed } = require("discord.js")
+const mongoUtil = require("../../mongoUtil.js")
 
 module.exports = class BanCommand extends Command {
     constructor(bot) {
@@ -38,17 +39,37 @@ module.exports = class BanCommand extends Command {
     })
 }
 
-    async run(msg, { user, reason }) {
-        const guild = msg.guild
-        user = user.toString().replace(/\D/g, '')
-        user = guild.members.get(user)
-        user.ban({days: 7, reason: reason})
-        const banEmbed = new RichEmbed()
-            .setTitle(`:warning: Vous avez été banni de ${guild.name}`)
-            .setDescription(`Vous avez été banni par <@${msg.author.id}>`)
+    async run(msg, { user, reason, guild }) {
+        if (guild) {         
+            const db = mongoUtil.getDb()
+            const guildCollection = await db.collection('guilds')
+            let guildDoc = await guildCollection.findOne({guild_id: guild.id})
+            let adminChannel = guildDoc["adminChannel"] //get the admin channel of the guild if on
+            const banEmbedAdmin = new RichEmbed()
+            .setDescription(`:warning: <@${user.id}> à été banni de ${guild.name}`)
             .setColor("#C0392B")
             .addField("Raison", reason)
             .addField("Durée", "Permanent")
-        user.send(banEmbed)
+            
+            if (adminChannel == "undefined") { //if channelAdmin is not defiend send the report to the owner of the guild
+                banEmbedAdmin.setTitle(`Bannissement automatique\n\n:warning: Ce message est censé être envoyé dans un channel vous pouvez le définir avec \"!setchannel admin\"`)
+                await guild.owner.send(banEmbedAdmin)
+            } else { //if channelAdmin is defined send the report to this channel
+                await guild.channels.get(adminChannel).send(banEmbedAdmin)
+            }
+            user.ban({days: 7, reason: reason})
+        } else {
+            const guild = msg.guild
+            user = user.toString().replace(/\D/g, '')
+            user = guild.members.get(user)
+            user.ban({days: 7, reason: reason})
+            const banEmbed = new RichEmbed()
+                .setTitle(`:warning: Vous avez été banni de ${guild.name}`)
+                .setDescription(`Vous avez été banni par <@${msg.author.id}>`)
+                .setColor("#C0392B")
+                .addField("Raison", reason)
+                .addField("Durée", "Permanent")
+            user.send(banEmbed)
+        }
     }
 }

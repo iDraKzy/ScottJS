@@ -22,14 +22,14 @@ module.exports = class ReminderCommand extends Command {
                     text: "Define a reminder and send a private message once the date is reached"
                 }
             ],
-            examples: ["!reminder 1:06:10:15 Go to sleep", "!reminder 0:00:50:15"],
+            examples: ["The following will remind you in 3 days, 6 hours, 5 minutes and 3 seconds for 'I like dogs': !reminder 3d6h5m3s I like dogs"],
             format: "!reminder [time] [reason]",
             args: [
                 {
-                    type: "integer",
-                    key: "mins",
-                    prompt: "Combien de minutes avant le rappel ?",
-                    error: "Ceci n'est pas un nombre"
+                    type: "string",
+                    key: "date",
+                    prompt: "Dans combien de temps voulez-vous le rappel?",
+                    error: "Ceci n'est pas un format valide"
                 },
                 {
                     type: "string",
@@ -42,8 +42,29 @@ module.exports = class ReminderCommand extends Command {
     }
 
 
-    async run(msg, { mins, reason }) {
+    async run(msg, { date, reason }) {
         const reminderCollection = mongoUtil.getDb().collection("reminders")
+        const regex = /(\d{1,})\D{1,}/gm
+        let parsedDate = []
+        let m
+        while ((m = regex.exec(date)) !== null) {
+            if (m.index === regex.lastIndex) {
+                regex.lastIndex++;
+            }
+            parsedDate.push(m[0])
+        }
+        const charNumb = {
+            'd': 1440,
+            'h': 60,
+            'm': 1
+        }
+        let mins = 0
+        parsedDate.forEach((element, index) => {
+            if (element.replace(/[0-9]/gm, '') in charNumb) {
+                mins += Number(element.substring(0, element.length - 1)) * charNumb[element.replace(/[0-9]/gm, '')] 
+            }
+        })
+        console.log(mins)
         const minsMS = mins * 60 * 1000
         const query = {
             discord_id: msg.author.id,

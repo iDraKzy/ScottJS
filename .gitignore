@@ -60,4 +60,9 @@ typings/
 
 # next.js build output
 .next
+<<<<<<< HEAD
+=======
+
+botsettings.json
+>>>>>>> 2246d07124ff500149c6cf36a356f1895af0a792
 scott.code-workspace
