@@ -47,4 +47,3 @@ module.exports = class PhotosComamnd extends Command {
         }
     }
 }
-
