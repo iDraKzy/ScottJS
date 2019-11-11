@@ -116,6 +116,7 @@ module.exports = class DuelCommand extends Command {
                         addMoney(loser.id, -(amount))
             })
         }, Math.floor(Math.random() * (5000 - 2000) + 2000))
+    })
             //Generate the embed declaring the winner
         collector.on("end", (collected, reason) => {
             if (reason !== "confirmation") {
@@ -125,8 +126,7 @@ module.exports = class DuelCommand extends Command {
                     .setDescription("Duel annulé")
                     .setThumbnail(user.displayAvatarURL)
                 msg.say(timeoutEmbed)
-                }
-            })
+            }
         })
     }
 }
