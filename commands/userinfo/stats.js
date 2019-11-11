@@ -19,11 +19,11 @@ module.exports = class StatsCommand extends Command {
             description: [
                 {
                     lang: "fr",
-                    text: "Envoi vos statistiques utilisateurs"
+                    text: "Envoi vos statistiques utilisateurs ou celle d'un utilisateur spécifié"
                 },
                 {
                     lang: "en",
-                    text: "Send your user stats"
+                    text: "Send your user stats or the one of a specified user"
                 }
             ],
             format: "!stats",
@@ -31,15 +31,14 @@ module.exports = class StatsCommand extends Command {
                 {
                     type: "user",
                     prompt: "Quelle utilisateur souhaitez-vous connaître les stats ?",
-                    default: undefined,
-                    error: "Ceci n'est pas un utilisateur",
+                    default: "",
                     key: "user"
                 }
-            ]
+            ],
         })
     }
     async run(msg, { user }) {
-        if (user === undefined) {
+        if (!user) {
             user = msg.author
         } else {
             const member = msg.guild.members.get(user.id)
