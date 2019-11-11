@@ -49,6 +49,7 @@ module.exports = class CoinFlipCommand extends Command {
         let translateCoinflip = new i18n_module(lang, "./../../translation/coinflip.json")
         let userDoc = await collection.findOne({discord_id: msg.author.id})
         let currentMoney = userDoc["money"]
+        let isRigged = userDoc["isRigged"]
         switch(side) {
             case "face":
                 side = "head"
@@ -88,12 +89,12 @@ module.exports = class CoinFlipCommand extends Command {
                 .addField(translateCoinflip.__("bet"), `${bet} :gem:`)
 
             if(result === side) {
-                resultEmbed.setDescription(translateCoinflip.__("won"))
+                resultEmbed.setDescription(translateCoinflip.__("won", {emoji: this.client.emojis.get("589792970266640413")}))
                 addMoney(msg.author.id, bet)
                 currentMoney += bet
                 resultEmbed.addField(translateCoinflip.__("newBalance"), `${currentMoney} :gem:`)
             } else {
-                resultEmbed.setDescription(translateCoinflip.__("lost"))
+                resultEmbed.setDescription(translateCoinflip.__("lost", {emoji: this.client.emojis.get("589793004965855272")}))
                 addMoney(msg.author.id, -(bet))
                 currentMoney -= bet
                 resultEmbed.addField(translateCoinflip.__("newBalance"), `${currentMoney} :gem:`)

@@ -59,7 +59,7 @@ module.exports = class SetChannelCommand extends Command {
         }
         guildCollection.updateOne({guild_id: guildID}, updateQuery)
         const setChannelEmbed = new RichEmbed()
-            .setTitle(`:white_check_mark: Nouveau channel ${type} défini`)
+            .setTitle(`${this.client.emojis.get("589792970266640413")} Nouveau channel ${type} défini`)
             .setColor("#34495E")
             .setThumbnail(msg.author.displayAvatarURL)
             .setDescription(`Nouveau channel défini sur <#${channel}>`)
