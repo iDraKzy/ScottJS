@@ -46,7 +46,7 @@ module.exports = class GiveCommand extends commando.Command {
         let currentTime = moment().format("DD/MM/YYYY [à] HH:mm:ss")
         //check
         let errorEmbed = new RichEmbed()
-            .setTitle(`:x: Don de ${msg.author.username}`)
+            .setTitle(`${this.client.emojis.get("589793004965855272")} Don de ${msg.author.username}`)
             .setColor("#E74C3C")
             .setThumbnail(msg.author.displayAvatarURL)
             .setFooter(`Demandé le ${currentTime}`)
@@ -61,7 +61,7 @@ module.exports = class GiveCommand extends commando.Command {
         editDoc.addMoney(receiver.id, give)
         editDoc.addMoney(msg.author.id, -(give))
         let giveEmbed = new RichEmbed()
-            .setTitle(`:white_check_mark: Don de ${msg.author.username}`)
+            .setTitle(`${this.client.emojis.get("589792970266640413")} Don de ${msg.author.username}`)
             .setColor("#3498DB")
             .setThumbnail(msg.author.displayAvatarURL)
             .setDescription("Votre don à bien été enregistré")
