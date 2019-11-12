@@ -43,7 +43,7 @@ module.exports = class ShowInfoCommand extends Command {
                 }
                 const showEmbed = new RichEmbed()
                     .setTitle(`Informations à propos de la série ${res.displayName}`)
-                    .setDescription(`Synopsis en anglais : \n\n${res.synopsis.replace(/<br>/g, "\n").replace(/<(\/)?b>/g, "")}`) //TODO: Translation
+                    .setDescription(`Synopsis en anglais : \n\n${res.synopsis.replace(/<br>/g, "\n").replace(/<(\/)?b>/g, "**")}`) //TODO: Translation
                     .setImage(res.image)
                     .setColor("#8E44AD")
                     .addField("Statut", res.status) //TODO: Translation
