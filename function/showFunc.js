@@ -20,7 +20,7 @@ async function updateDB(method, name, collection) {
                 start_date: show.start_date,
                 end_date: show.end_date,
                 country: show.country,
-                satus: show.status,
+                status: show.status,
                 network: show.network,
                 image: show.image_path,
                 thumbnail: show.image_thumbnail_path,
