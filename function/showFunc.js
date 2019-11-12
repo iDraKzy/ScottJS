@@ -64,6 +64,7 @@ module.exports.getShow = async function(name) {
             }
         }
     } else {
+        if (showDoc.countdown === null) return showDoc
         let airDate = showDoc.countdown.air_date
         airDate = airDate.replace(" ", "T")
         airDate = airDate + "+00:00"

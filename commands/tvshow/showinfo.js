@@ -51,8 +51,10 @@ module.exports = class ShowInfoCommand extends Command {
                     .addField("Chaîne", res.network)
                     .addField("Note", res.rating)
                     .addField("Genre", res.genres.join(", "))
-                    .addField("Prochain épisode", `${res.countdown.name}\n${res.countdown.air_date} UTC sur ${res.network}`)
                     .setFooter(`Informations fournies par Episodate.com`)
+                if (res.countdown != null) {
+                    showEmbed.addField("Prochain épisode", `${res.countdown.name}\n${res.countdown.air_date} UTC sur ${res.network}`)
+                }
                 msg.say(showEmbed)
             })
     }
