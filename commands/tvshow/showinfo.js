@@ -36,7 +36,7 @@ module.exports = class ShowInfoCommand extends Command {
                 //Si la fonction ne returne rien envoi une erreur
                 if (res === undefined) {
                     const showErrorEmbed = new RichEmbed()
-                        .setTtiel("Cette série n'existe pas")
+                        .setTitle("Cette série n'existe pas")
                         .setDescription("Ou vous avez fait une erreur dans le titre")
                         .setColor("#E74C3C")
                     msg.say(showErrorEmbed)
