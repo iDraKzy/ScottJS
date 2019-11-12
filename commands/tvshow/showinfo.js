@@ -43,16 +43,16 @@ module.exports = class ShowInfoCommand extends Command {
                 }
                 const showEmbed = new RichEmbed()
                     .setTitle(`Informations à propos de la série ${res.displayName}`)
-                    .setDescription(`Synopsis en anglais : \n\n${res.synopsis.replace(/<br>/g, "\n")}`)
+                    .setDescription(`Synopsis en anglais : \n\n${res.synopsis.replace(/<br>/g, "\n")}`) //TODO: Translation
                     .setImage(res.image)
                     .setColor("#8E44AD")
-                    .addField("Statut", res.status) //@TODO Translation
+                    .addField("Statut", res.status) //TODO: Translation
                     .addField("Pays", res.country)
                     .addField("Chaîne", res.network)
                     .addField("Note", res.rating)
                     .addField("Genre", res.genres.join(", "))
-                    .addField("Prochaine épisode", `${res.countdown.name}\n${res.countdown.air_date} UTC sur ${res.network}`)
-                    .setFooter(`Information fournies par Episodate.com`)
+                    .addField("Prochain épisode", `${res.countdown.name}\n${res.countdown.air_date} UTC sur ${res.network}`)
+                    .setFooter(`Informations fournies par Episodate.com`)
                 msg.say(showEmbed)
             })
     }
