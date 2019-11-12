@@ -35,17 +35,13 @@ async function updateDB(method, name, collection) {
                         .catch(e => console.error("An error occured when trying to add a show to the DB. Error: " + e))
                     return query
                 case "UPDATE":
-                    await collection.deleteOne({name: name})
-                        .then(res => console.log(`Show deleted`))
+                    await collection.updateOne({name: name}, {$set: query})
+                        .then(res => console.log(`Show updated`))
                         .catch(e => console.error("An error occured when trying to delete a show in the DB. Error: " + e))
-                    await collection.insertOne(query)
-                        .then(res => console.log(`Show inserted successfuly with id ${res.insertedId}`))
-                        .catch(e => console.error("An error occured when trying to add a show to the DB. Error: " + e))
                     return query
             }
         }
     })
-
 } 
 
 module.exports.getShow = async function(name) {
