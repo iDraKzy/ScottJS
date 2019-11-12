@@ -25,9 +25,10 @@ bot.registry
   .registerGroups([
     ["music", "🎵 Music"],
     ["fun", "🎉 Fun"],
+    ["tvshow", "📺 TV Show"],
     ["userinfo", "ℹ User Info"],
     ["economy", "💎 Economy"],
-    ["managment", "⚖ Server Managment"]
+    ["managment", "⚖ Server Managment"],
   ])
   .registerDefaultGroups()
   .registerDefaultCommands({
