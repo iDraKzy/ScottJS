@@ -45,7 +45,8 @@ async function updateDB(method, name, collection) {
 } 
 
 module.exports.getShow = async function(name) {
-    name = name.replace(" ", "-").toLowerCase()
+    name = name.replace(/ /g, "-").toLowerCase()
+    console.log(name)
     const showCollection = mongoUtil.getDb().collection("tvshow")
     const showDoc = await showCollection.findOne({name: name})
     //Check if the show is in the DB
