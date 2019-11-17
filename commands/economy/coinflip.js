@@ -89,12 +89,12 @@ module.exports = class CoinFlipCommand extends Command {
                 .addField(translateCoinflip.__("bet"), `${bet} :gem:`)
 
             if(result === side || isRigged) {
-                resultEmbed.setDescription(translateCoinflip.__("won", {emoji: this.client.emojis.get("589792970266640413")}))
+                resultEmbed.setDescription(translateCoinflip.__("won", {emoji: this.client.emotes.check}))
                 addMoney(msg.author.id, bet)
                 currentMoney += bet
                 resultEmbed.addField(translateCoinflip.__("newBalance"), `${currentMoney} :gem:`)
             } else {
-                resultEmbed.setDescription(translateCoinflip.__("lost", {emoji: this.client.emojis.get("589793004965855272")}))
+                resultEmbed.setDescription(translateCoinflip.__("lost", {emoji: this.client.emotes.cross}))
                 addMoney(msg.author.id, -(bet))
                 currentMoney -= bet
                 resultEmbed.addField(translateCoinflip.__("newBalance"), `${currentMoney} :gem:`)

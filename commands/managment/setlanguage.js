@@ -53,7 +53,7 @@ module.exports = class LanguageCommand extends Command {
         console.log(lang)
         guildCollection.updateOne({guild_id: guild}, {$set: {lang: lang}})
         const changeLanguageEmbed = new RichEmbed()
-            .setTitle(`${this.client.emojis.get("589792970266640413")} Nouvelle langue définie sur ${langDisplay}`)
+            .setTitle(`${this.client.emotes.check} Nouvelle langue définie sur ${langDisplay}`)
             .setDescription(":warning: Les messages systèmes sont en anglais pour l'instant")
             .setColor("#34495E")
             .setThumbnail(msg.author.displayAvatarURL)
