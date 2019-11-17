@@ -41,7 +41,7 @@ module.exports = class ConvertCommand extends Command {
         let currentMoney = userDoc["money"]
         let currentPoints = userDoc["points"]
         const convertErrorEmbed = new RichEmbed()
-            .setTitle(`${this.client.emojis.get("589793004965855272")} Convertion de gemmes de ${msg.author.username}`)
+            .setTitle(`${this.client.emotes.cross} Convertion de gemmes de ${msg.author.username}`)
             .setThumbnail(msg.author.displayAvatarURL)
             .setColor("#E74C3C")
             .addField("Votre portemonnaie", `${currentMoney} :gem:`)
@@ -54,7 +54,7 @@ module.exports = class ConvertCommand extends Command {
             return msg.say(convertErrorEmbed)
         } else {
             const convertEmbed = new RichEmbed()
-                .setTitle(`${this.client.emojis.get("589792970266640413")} Convertion de gemmes pour ${msg.author.username}`)
+                .setTitle(`${this.client.emotes.check} Convertion de gemmes pour ${msg.author.username}`)
                 .setDescription(`Vous avez converti ${amount} :gem: avec succès`)
                 .setThumbnail(msg.author.displayAvatarURL)
                 .setColor("#3498DB")

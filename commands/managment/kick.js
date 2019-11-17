@@ -44,7 +44,7 @@ module.exports = class KickCommand extends Command {
         user = guild.members.get(user)
         user.kick(reason)
         const kickEmbed = new RichEmbed()
-            .setTitle(`${this.client.emojis.get("632686188704301142")} Vous avez été expulsé de ${guild.name}`)
+            .setTitle(`${this.client.emotes.warn} Vous avez été expulsé de ${guild.name}`)
             .setDescription(`Vous avez été expulsé par <@${msg.author.id}>`)
             .setColor("#C0392B")
             .addField("Raison", reason)

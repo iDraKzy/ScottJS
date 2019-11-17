@@ -37,6 +37,15 @@ bot.registry
   .registerCommandsIn(path.join(__dirname, "commands"))
 
 
+  bot.emotes = {
+      check: "<:Check:589792970266640413>",
+      cross: "<:Cross:589793004965855272>",
+      info: "<:Info:632686188687261716>",
+      question: "<:Question:632686615126474792>",
+      warn: "<:Warn:632686188704301142>"
+  }
+
+
 
 bot.on("ready", () => {
     bot.user.setActivity("!help", {type: "LISTENING" })

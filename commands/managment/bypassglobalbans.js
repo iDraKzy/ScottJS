@@ -47,11 +47,11 @@ module.exports = class BypassCommand extends Command {
                 break
         }
         guildCollection.updateOne({guild_id: guild}, {$set: { bypassGlobalBans: state}})
-        const changeLanguageEmbed = new RichEmbed()
-            .setTitle(`${this.client.emojis.get("589792970266640413")} Les Global Bans ${display}`)
+        const bypassEmbed = new RichEmbed()
+            .setTitle(`${this.client.emotes.check} Les Global Bans ${display}`)
             .setColor("#34495E")
             .setThumbnail(msg.author.displayAvatarURL)
             .setFooter(`Effectué le ${currentTime}`)
-        msg.say(changeLanguageEmbed)
+        msg.say(bypassEmbed)
     }
 }
