@@ -31,15 +31,29 @@ module.exports = class DailiesCommand extends Command {
         const collection = db.collection("members")
         const guildCollection = db.collection("guilds")
         const guildDoc = await guildCollection.findOne({guild_id: msg.guild.id})
-        const lang = guildDoc["lang"]
-        const translateDailies = new i18n_module(lang, "./../../translation/dailies.json")
+        const translateDailies = new i18n_module(guildDoc.lang, "./../../translation/dailies.json")
         const userDoc = await collection.findOne({discord_id: msg.author.id})
-        const lastDailies = userDoc["lastDailies"]
+        const lastDailies = userDoc.lastDailies
         const currentDate = Date.now()
-        const currentLevel = userDoc["level"]
-        const gemToAdd = 1000 + (50 * currentLevel)
+        let gemToAdd = 1000 + (50 * userDoc.level) //Calculate base gems
+        //Check premium
+        switch(userDoc.premium) {
+            case 1:
+                gemToAdd * 1.25
+                break
+            case 2:
+                gemToAdd * 1.5
+                break
+            case 3:
+                gemToAdd * 1.75
+                break
+            case 4:
+                gemToAdd * 2
+                break
+        }
         const currentGem = userDoc["money"] + gemToAdd
         if(currentDate - 1000 * 60 * 60 * 22 >= lastDailies) {
+            //Give the gem if it was more than 22h since last dailies
             addMoney(msg.author.id, gemToAdd)
             const displayDate = moment().format(translateDailies.__("dateFormat"))
             collection.updateOne({discord_id: msg.author.id}, {$set: {lastDailies: currentDate}})
@@ -52,6 +66,7 @@ module.exports = class DailiesCommand extends Command {
                 .addField(translateDailies.__("gem"), `${currentGem} :gem:`)
             await msg.say(dailiesEmbed)
         } else {
+            //Send an error if it was less
             let timePassed = currentDate - lastDailies
             let timeLeft = ms(1000 * 60 * 60 * 22 - timePassed)
             let timeLeftDisplay = moment().set({'hour': timeLeft.hours, 'minute': timeLeft.minutes, 'second': timeLeft.seconds}).format("HH:mm:ss")
