@@ -108,10 +108,11 @@ bot.on("ready", () => {
                 const bannedMemberGuild = bot.guilds.get(ban.guild)
                 const bannedMember = bannedMemberGuild.members.get(ban.discord_id)
                 bannedMemberGuild.unban(bannedMember.user, "Ban expired")
-                const unbanTempEmbed = new RicheEmbed()
+                const unbanTempEmbed = new RichEmbed()
                     .setTitle(`${bot.emotes.check} Vous avez été débanni du serveur ${bannedMemberGuild.name}`)
                     .setColor("#2ECC71")
                 bannedMember.user.send(unbanTempEmbed)
+                tempBanCollection.deleteOne({discord_id: bannedMember.user.id})
             }
         })
     }, 60000)
