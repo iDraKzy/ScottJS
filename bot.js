@@ -106,7 +106,7 @@ bot.on("ready", () => {
         tempBanList.forEach(async ban => {
             if (ban.date < currentTime) {
                 const bannedMemberGuild = bot.guilds.get(ban.guild)
-                const bannedUser = await bot.fetchUser(ban.discord_id)
+                const bannedUser = await bot.fetchUser(ban.discord_id, false)
                 bannedMemberGuild.unban(bannedUser, "Ban expired")
                     .then(user => {
                         const unbanTempEmbed = new RichEmbed()
