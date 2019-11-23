@@ -1,5 +1,6 @@
 const commando = require('discord.js-commando');
 const editDoc = require("../../function/editDoc.js")
+const { addMoney } = require("../../function/econFunc")
 const { RichEmbed } = require("discord.js")
 const mongoUtil = require("../../mongoUtil.js")
 const moment = require("moment")

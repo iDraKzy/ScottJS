@@ -1,8 +1,7 @@
 const { Command } = require('discord.js-commando')
 const { RichEmbed } = require("discord.js")
-const { addMoney } = require("../../function/editDoc.js")
 const moment = require("moment")
-const { checkMoney } = require("../../function/econFunc.js")
+const { checkMoney, addMoney } = require("../../function/econFunc.js")
 
 module.exports = class DuelCommand extends Command {
     constructor(client) {

@@ -1,8 +1,9 @@
 const { Command } = require('discord.js-commando')
 const { RichEmbed } = require("discord.js") 
-const { addMoney } = require("../../function/editDoc.js")
+const { checkMoney, addMoney } = require("../../function/econFunc.js")
 const mongoUtil = require("../../mongoUtil.js")
 const i18n_module = require("i18n-nodejs")
+const mongodb = require("mongodb")
 
 module.exports = class CoinFlipCommand extends Command {
     constructor(bot) {
@@ -60,46 +61,82 @@ module.exports = class CoinFlipCommand extends Command {
         }
         if(bet > currentMoney) {
             const notEnoughMoneyEmbed = new RichEmbed()
-                .setTitle(translateCoinflip.__("errorFlip"))
+                .setTitle(translateCoinflip.__("errorFlip", {emoji: this.client.emotes.cross}))
                 .setColor("#E74C3C")
                 .setThumbnail(msg.author.displayAvatarURL)
                 .setDescription(translateCoinflip.__("notEnough"))
                 .addField(translateCoinflip.__("wallet"), `${currentMoney} :gem:`)
             return msg.say(notEnoughMoneyEmbed)
         } else {
-            let coinFlip = Math.round(Math.random() * 10)
-            console.log(coinFlip)
-            let coinImage
-            let result
-            if( coinFlip <= 5 || (isRigged && side == "head")) {
-                result = "head"
-                coinImage = "https://www.random.org/coins/faces/60-eur/belgium-1euro/obverse.jpg"
-                // head
-            } else {
-                result = "tail"
-                coinImage = "https://www.random.org/coins/faces/60-eur/belgium-1euro/reverse.jpg"
-                // tail
+            const gemsMeta = await checkMoney(msg.author.id, bet)
+            if (bet > 10000) {
+                const noMoreThan = new RichEmbed()
+                    .setTitle(translateCoinflip.__("errorFlip", {emoji: this.client.emotes.cross}))
+                    .setColor("#E74C3C")
+                    .setThumbnail(msg.author.displayAvatarURL)
+                    .setDescription(translateCoinflip.__("noMoreThan", {limit: gemsMeta[2]}))
+                return msg.say(noMoreThan)
             }
-            const resultEmbed = new RichEmbed()
-                .setTitle(translateCoinflip.__("flipName", {name: msg.author.username}))
-                .setColor("#3498DB")
-                .setThumbnail(msg.author.displayAvatarURL)
-                .setImage(coinImage)
-                .addField(translateCoinflip.__("betOn"), translateCoinflip.__(side))
-                .addField(translateCoinflip.__("bet"), `${bet} :gem:`)
-
-            if(result === side || isRigged) {
-                resultEmbed.setDescription(translateCoinflip.__("won", {emoji: this.client.emotes.check}))
-                addMoney(msg.author.id, bet)
-                currentMoney += bet
-                resultEmbed.addField(translateCoinflip.__("newBalance"), `${currentMoney} :gem:`)
-            } else {
-                resultEmbed.setDescription(translateCoinflip.__("lost", {emoji: this.client.emotes.cross}))
-                addMoney(msg.author.id, -(bet))
-                currentMoney -= bet
-                resultEmbed.addField(translateCoinflip.__("newBalance"), `${currentMoney} :gem:`)
+            console.log(gemsMeta)
+            if (!gemsMeta[5]) {
+                const Embed = new RichEmbed()
+                    .setTitle(translateCoinflip.__("info", { emoji: this.client.emotes.info}))
+                    .setColor("#3498db")
+                    .setDescription(translateCoinflip.__("dailyLimit"))
+                msg.say(Embed)                   
             }
-            msg.say(resultEmbed)
+            if ((gemsMeta[3] + bet) > gemsMeta[2]) {
+                const Embed = new RichEmbed()
+                    .setTitle(translateCoinflip.__("errorFlip", {emoji: this.client.emotes.cross}))
+                    .setColor("#E74C3C")
+                    .setThumbnail(msg.author.displayAvatarURL)
+                    .setDescription(translateCoinflip.__("winningLimitReached"))
+                    .addField(translateCoinflip.__("limit"), `${gemsMeta[2]} :gem:`)
+                    .addField(translateCoinflip.__("gemsRecivied"), `${gemsMeta[3]} :gem:`)
+                return msg.say(Embed)
+            } else {
+                let coinFlip = Math.round(Math.random() * 10)
+                let coinImage
+                let result
+                if( coinFlip <= 5 || (isRigged && side == "head")) {
+                    result = "head"
+                    coinImage = "https://www.random.org/coins/faces/60-eur/belgium-1euro/obverse.jpg"
+                    // head
+                } else {
+                    result = "tail"
+                    coinImage = "https://www.random.org/coins/faces/60-eur/belgium-1euro/reverse.jpg"
+                    // tail
+                }
+                const resultEmbed = new RichEmbed()
+                    .setTitle(translateCoinflip.__("flipName", {name: msg.author.username}))
+                    .setColor("#3498DB")
+                    .setThumbnail(msg.author.displayAvatarURL)
+                    .setImage(coinImage)
+                    .addField(translateCoinflip.__("betOn"), translateCoinflip.__(side))
+                    .addField(translateCoinflip.__("bet"), `${bet} :gem:`)
+                    
+                    if(result === side || isRigged) {
+                        resultEmbed.setDescription(translateCoinflip.__("won", {emoji: this.client.emotes.check}))
+                        addMoney(msg.author.id, bet)
+                        currentMoney += bet
+                        resultEmbed.addField(translateCoinflip.__("newBalance"), `${currentMoney} :gem:`)
+                        resultEmbed.addBlankField()
+                        resultEmbed.addField(translateCoinflip.__("limit"), `${gemsMeta[2]} :gem:`)
+                        resultEmbed.addField(translateCoinflip.__("gemsRecivied"), `${gemsMeta[3] + bet} :gem:`)
+                        collection.updateOne({discord_id: msg.author.id}, {$set: {
+                            won: mongodb.Int32(bet)
+                        }})
+                    } else {
+                        resultEmbed.setDescription(translateCoinflip.__("lost", {emoji: this.client.emotes.cross}))
+                        addMoney(msg.author.id, -(bet))
+                        currentMoney -= bet
+                        resultEmbed.addField(translateCoinflip.__("newBalance"), `${currentMoney} :gem:`)
+                        resultEmbed.addBlankField()
+                        resultEmbed.addField(translateCoinflip.__("limit"), `${gemsMeta[2]} :gem:`)
+                        resultEmbed.addField(translateCoinflip.__("gemsRecivied"), `${gemsMeta[3]} :gem:`)
+                }
+                msg.say(resultEmbed)
+            }
         }
     }
 }

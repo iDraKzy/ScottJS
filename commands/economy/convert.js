@@ -3,7 +3,7 @@ const { RichEmbed } = require("discord.js")
 const mongoUtil = require("../../mongoUtil.js")
 const moment = require("moment")
 const { addPoints } = require("../../function/levelFunc.js")
-const { addMoney } = require("../../function/editDoc.js")
+const { addMoney } = require("../../function/econFunc.js")
 const roundTo = require("round-to")
 
 module.exports = class ConvertCommand extends Command {

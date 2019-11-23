@@ -8,8 +8,8 @@
         "en": "Tail"
     },
     "errorFlip": {
-        "fr": ":x: Lancer de pièce",
-        "en": ":x: Coin flip"
+        "fr": "{{emoji}} Lancer de pièce",
+        "en": "{{emoji}} Coin flip"
     },
     "flipName": {
         "fr": "Lancer de pièce pour {{name}}",
@@ -18,6 +18,22 @@
     "notEnough": {
         "fr": "Vous n'avez pas assez de :gem:",
         "en": "You don't have enough :gem:"
+    },
+    "winningLimitReached": {
+        "fr": "Si vous misez autant, vous allez dépasser la limtie journalière",
+        "en": "If you bet that much, you'll get past the daily limit"
+    },
+    "limit": {
+        "fr": "Limite",
+        "en": "Limit"
+    },
+    "noMoreThan": {
+        "fr": "Vous ne pouvez pas miser plus de {{limit}} :gem:",
+        "en": "You cannot bet more than {{limit}} :gem:"
+    },
+    "gemsRecivied": {
+        "fr": "Gemes reçues aujourd'hui",
+        "en": "Gems recivied today"
     },
     "wallet": {
         "fr": "Portemonnaie",
@@ -42,5 +58,13 @@
     "newBalance": {
         "fr": "Nouveau solde",
         "en": "New balance"
+    },
+    "dailyLimit": {
+        "fr": "La limite de journalière est combien de  :gem:  vous pouvez gagner par jour (de 00:00 à 23:59).\n Il est possible de l'augmenter en passant premium.",
+        "en": "The daily limit is how much  :gem:  you can win per day (from 00:00 AM to 11:59 PM).\n You can increase it by buying a premium subscription."
+    },
+    "info": {
+        "fr": "{{emoji}} Limite de :gem: journalière",
+        "en": "{{emoji}} Daily :gem: limit"
     }
 }

@@ -57,16 +57,6 @@ module.exports.createGuild = async function(id, name) {
     }
 }
 
-module.exports.addMoney = async function(id, moneyToAdd) {
-  console.log("AddMoney Called")
-  const db = mongoUtil.getDb()
-  const collection = db.collection("members")
-  let userDoc = await collection.findOne({discord_id: id})
-  let oldMoney = userDoc["money"]
-  let newMoney = oldMoney + moneyToAdd
-  collection.updateOne({discord_id: id}, {$set: {money: mongodb.Int32(newMoney)}})
-}
-
 module.exports.addImageRequested = async function(msg) {
   const db = mongoUtil.getDb()
   const collection = db.collection("members")

@@ -5,6 +5,7 @@ const { RichEmbed } = require("discord.js")
 const path = require("path")
 const mongodb = require("mongodb")
 const levelFunc = require("./function/levelFunc.js")
+const { resetLimit } = require("./function/econFunc.js")
 const editDoc = require("./function/editDoc.js")
 const mongoUtil = require("./mongoUtil.js")
 const moment = require("moment")
@@ -64,9 +65,39 @@ bot.on("ready", () => {
         }
     })
 
+    async function resetLimit() {
+        let nowDateMidnight = new Date(Date.now()).setHours(23,59,59)
+        console.log('Reset Limit')
+        const db = mongoUtil.getDb()
+        let collection = db.collection("meta")
+        collection.updateOne({usr: 'Scott'}, {$set: {
+            midnight: nowDateMidnight
+        }})
+        let userCollection = db.collection("members")
+        userCollection.updateMany({}, {$set: {
+            won: 0
+        }})
+        checkLimit()
+    }
+    
+    async function checkLimit() {
+        let nowDateMidnight = new Date(Date.now()).setHours(23,59,59)
+        const db = mongoUtil.getDb()
+        let collection = db.collection("meta")
+        let userDoc = await collection.findOne({usr: 'Scott'})
+        console.log('Check Limit')
+        if (!userDoc["midnight"]) {
+            resetLimit()
+        } else {
+            let midnight = userDoc["midnight"]
+            if ((midnight - nowDateMidnight) < 0) {
+                setTimeout(() => { resetLimit() }, (nowDateMidnight - Date.now()))
+            }
+        }
+    }
 
+    checkLimit()
     //Handle Reminder
-
     const reminderCollection = mongoUtil.getDb().collection("reminders")
     setInterval(async () => {
         console.log("Reminder handler called")
@@ -129,7 +160,6 @@ bot.on("ready", () => {
     }, time)
 
 })
-
 
 bot.on("guildCreate", guild => {
     editDoc.createGuild(guild.id, guild.name)
