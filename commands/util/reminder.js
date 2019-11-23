@@ -22,7 +22,7 @@ module.exports = class ReminderCommand extends Command {
                     text: "Define a reminder and send a private message once the date is reached"
                 }
             ],
-            examples: ["The following will remind you in 3 days, 6 hours, 5 minutes and 3 seconds for 'I like dogs': !reminder 3d6h5m3s I like dogs"],
+            examples: ["The following will remind you in 3 days, 6 hours and 5 minutes for 'I like dogs': !reminder 3d6h5m I like dogs"],
             format: "!reminder [time] [reason]",
             args: [
                 {
@@ -59,7 +59,7 @@ module.exports = class ReminderCommand extends Command {
             'm': 1
         }
         let mins = 0
-        parsedDate.forEach((element, index) => {
+        parsedDate.forEach((element) => {
             if (element.replace(/[0-9]/gm, '') in charNumb) {
                 mins += Number(element.substring(0, element.length - 1)) * charNumb[element.replace(/[0-9]/gm, '')] 
             }

@@ -97,6 +97,25 @@ bot.on("ready", () => {
     }
 
     checkLimit()
+    //Handle tempban
+    const tempBanCollection = mongoUtil.getDb().collection("tempban")
+    setInterval(async () => {
+        console.info("Tempban handler called")
+        const tempBanList = await tempBanCollection.find()
+        const currentTime = Date.now()
+        tempBanList.forEach(ban => {
+            if (ban.date < currentTime) {
+                const bannedMemberGuild = bot.guilds.get(ban.guild)
+                const bannedMember = bannedMemberGuild.members.get(ban.discord_id)
+                bannedMemberGuild.unban(bannedMember.user, "Ban expired")
+                const unbanTempEmbed = new RicheEmbed()
+                    .setTitle(`${bot.emotes.check} Vous avez été débanni du serveur ${bannedMemberGuild.name}`)
+                    .setColor("#2ECC71")
+                bannedMember.user.send(unbanTempEmbed)
+            }
+        })
+    }, 60000)
+
     //Handle Reminder
     const reminderCollection = mongoUtil.getDb().collection("reminders")
     setInterval(async () => {
@@ -104,9 +123,9 @@ bot.on("ready", () => {
         const reminderList = await reminderCollection.find()
         const currentTime = Date.now()
         reminderList.forEach(reminder => {
-            if (reminder["date"] < currentTime) {
-                const userGuild = bot.guilds.get(reminder["guild"])
-                const remindMember = userGuild.members.get(reminder["discord_id"])
+            if (reminder.date < currentTime) {
+                const userGuild = bot.guilds.get(reminder.guild)
+                const remindMember = userGuild.members.get(reminder.discord_id)
                 const remindEndEmbed = new RichEmbed()
                     .setTitle("Voici les informations que vous m'avez demandé de vous rappeler")
                     .setThumbnail(remindMember.user.displayAvatarURL)
@@ -166,7 +185,8 @@ bot.on("guildCreate", guild => {
 })
 
 bot.on("guildMemberAdd", async member => {
-    const collection = mongoUtil.getDb().collection("members")
+    const db = mongoUtil.getDb()
+    const collection = await db.collection("members")
     const userDoc = await collection.findOne({"discord_id": member.user.id.toString(10)})
     if (userDoc === null) {
         editDoc.insertDoc(member.user.id, member.guild.id, member.user.username, member.user.discriminator)
@@ -182,8 +202,8 @@ bot.on("guildMemberAdd", async member => {
             .setColor("#C0392B")
             .addField("Raison", "Global Banned...")
             .addField("Durée", "Permanent")
-        let message = member.send(banEmbed)
-        bot.registry.commands.get("ban").run(message, { user: member, reason: "Global Banned...", guild: member.guild })
+        member.send(banEmbed)
+        bot.registry.commands.get("ban").call(member, "Global Banned...", member.guild)
     } else if (userDoc.isGlobalBanned && bypassGlobalBans) {
         let adminChannel = guildDoc["adminChannel"] //get the admin channel of the guild if on
         const banEmbedAdmin = new RichEmbed()
