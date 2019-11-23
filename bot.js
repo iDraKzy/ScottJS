@@ -118,7 +118,7 @@ bot.on("ready", () => {
                     })
             }
         })
-    }, 10000)
+    }, 60000)
 
     //Handle Reminder
     const reminderCollection = mongoUtil.getDb().collection("reminders")
@@ -263,7 +263,7 @@ bot.on("message", async message => {
 })
 
 bot.login(botSettings.token)
-    .then(r => console.log("Bot connected"))
+    .then(() => console.log("Bot connected"))
     .catch(e => console.log(e))
 
 setTimeout(() => {
