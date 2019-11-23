@@ -9,11 +9,13 @@ module.exports.checkMoney = async function(id, amount) {
     let won = (!userDoc["won"]) ? 0 : userDoc["won"]
     let bank = (!userDoc["bank"]) ? 0 : userDoc["bank"]
     let limitReachedOn = (!userDoc["bank"]) ? 0 : userDoc["limitReachedOn"]
-    collection.updateOne({discord_id: id}, {$set: {
-        limit: mongodb.Int32(limit),
-        won: mongodb.Int32(won),
-        bank: mongodb.Int32(bank)
-    }})
+    if (!userDoc["limit"]) {
+        collection.updateOne({discord_id: id}, {$set: {
+            limit: mongodb.Int32(limit),
+            won: mongodb.Int32(won),
+            bank: mongodb.Int32(bank)
+        }})
+    }
     return [userDoc["money"] > amount, userDoc["money"], limit, won, bank, !knowsAbout, limitReachedOn]
 }
 

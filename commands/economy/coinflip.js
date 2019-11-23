@@ -124,7 +124,7 @@ module.exports = class CoinFlipCommand extends Command {
                         resultEmbed.addField(translateCoinflip.__("limit"), `${gemsMeta[2]} :gem:`)
                         resultEmbed.addField(translateCoinflip.__("gemsRecivied"), `${gemsMeta[3] + bet} :gem:`)
                         collection.updateOne({discord_id: msg.author.id}, {$set: {
-                            won: mongodb.Int32(bet)
+                            won: mongodb.Int32(gemsMeta[3] + bet)
                         }})
                     } else {
                         resultEmbed.setDescription(translateCoinflip.__("lost", {emoji: this.client.emotes.cross}))
