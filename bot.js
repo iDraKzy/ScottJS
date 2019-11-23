@@ -129,7 +129,7 @@ bot.on("ready", () => {
         reminderList.forEach(reminder => {
             if (reminder.date < currentTime) {
                 bot.fetchUser(reminder.discord_id)
-                    .then(user => {
+                    .then(async user => {
                         remindDMChannel = await user.createDM()
                         const remindEndEmbed = new RichEmbed()
                             .setTitle("Voici les informations que vous m'avez demandé de vous rappeler")
