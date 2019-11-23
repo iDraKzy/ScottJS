@@ -105,16 +105,17 @@ bot.on("ready", () => {
         const currentTime = Date.now()
         reminderList.forEach(reminder => {
             if (reminder["date"] < currentTime) {
-                const userGuild = bot.guilds.get(reminder["guild"])
-                const remindMember = userGuild.members.get(reminder["discord_id"])
-                const remindEndEmbed = new RichEmbed()
-                    .setTitle("Voici les informations que vous m'avez demandé de vous rappeler")
-                    .setThumbnail(remindMember.user.displayAvatarURL)
-                    .setDescription(reminder["reason"])
-                    .setColor("#3498DB")
-                    .setFooter(`Message envoyé le ${moment().format("DD/MM/YYYY [à] HH:mm:ss")}`)
-                remindMember.user.send(remindEndEmbed)
-                reminderCollection.deleteOne(reminder)
+                bot.fetchUser(reminder.discord_id)
+                    .then(user => {
+                        const remindEndEmbed = new RichEmbed()
+                            .setTitle("Voici les informations que vous m'avez demandé de vous rappeler")
+                            .setThumbnail(user.displayAvatarURL)
+                            .setDescription(reminder["reason"])
+                            .setColor("#3498DB")
+                            .setFooter(`Message envoyé le ${moment().format("DD/MM/YYYY [à] HH:mm:ss")}`)
+                        user.send(remindEndEmbed)
+                        reminderCollection.deleteOne(reminder)
+                })
             }
         })
     }, 60000)
