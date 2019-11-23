@@ -50,8 +50,8 @@ module.exports = class BanCommand extends Command {
         console.log(date)
         const db = mongoUtil.getDb()
         const guild = msg.guild
-        user = user.toString().replace(/\D/g, '')
-        user = guild.members.get(user)
+        let member = user.toString().replace(/\D/g, '')
+        member = guild.members.get(member)
         let banEmbed = new RichEmbed()
             .setTitle(`${this.client.emotes.warn} Vous avez été banni de ${guild.name}`)
             .setDescription(`Vous avez été banni par <@${msg.author.id}>`)
@@ -59,6 +59,7 @@ module.exports = class BanCommand extends Command {
             .addField("Raison", reason)
 
         if (date !== 0) {
+            console.log(member)
             const tempBanCollection = db.collection("tempban")
             const regex = /(\d{1,})\D{1,}/gm
             let parsedDate = []
@@ -80,12 +81,11 @@ module.exports = class BanCommand extends Command {
                     mins += Number(element.substring(0, element.length - 1)) * charNumb[element.replace(/[0-9]/gm, '')] 
                 }
             })
-            console.log(mins)
             const minsMS = mins * 60 * 1000
             const query = {
-                discord_id: msg.author.id,
-                guild: msg.guild.id,
-                username: msg.author.username,
+                discord_id: member.user.id,
+                guild: member.guild.id,
+                username: member.user.username,
                 date: Date.now() + minsMS,
                 reason: reason
             }
@@ -110,8 +110,8 @@ module.exports = class BanCommand extends Command {
         } else {
             banEmbed.addField("Durée", "Permanent")
         }
-        await user.send(banEmbed)
-        user.ban({days: 7, reason: reason})
+        await member.send(banEmbed)
+        member.ban({days: 7, reason: reason})
     }
     
     async call(user, reason, guild) {

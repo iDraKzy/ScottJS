@@ -103,19 +103,21 @@ bot.on("ready", () => {
         console.info("Tempban handler called")
         const tempBanList = await tempBanCollection.find()
         const currentTime = Date.now()
-        tempBanList.forEach(ban => {
+        tempBanList.forEach(async ban => {
             if (ban.date < currentTime) {
                 const bannedMemberGuild = bot.guilds.get(ban.guild)
-                const bannedMember = bannedMemberGuild.members.get(ban.discord_id)
-                bannedMemberGuild.unban(bannedMember.user, "Ban expired")
-                const unbanTempEmbed = new RichEmbed()
-                    .setTitle(`${bot.emotes.check} Vous avez été débanni du serveur ${bannedMemberGuild.name}`)
-                    .setColor("#2ECC71")
-                bannedMember.user.send(unbanTempEmbed)
-                tempBanCollection.deleteOne({discord_id: bannedMember.user.id})
+                const bannedUser = await bot.fetchUser(ban.discord_id)
+                bannedMemberGuild.unban(bannedUser, "Ban expired")
+                    .then(user => {
+                        const unbanTempEmbed = new RichEmbed()
+                            .setTitle(`${bot.emotes.check} Vous avez été débanni du serveur ${user.username}`)
+                            .setColor("#2ECC71")
+                        user.send(unbanTempEmbed)
+                        await tempBanCollection.deleteOne({discord_id: bannedMember.user.id})
+                    })
             }
         })
-    }, 60000)
+    }, 10000)
 
     //Handle Reminder
     const reminderCollection = mongoUtil.getDb().collection("reminders")
