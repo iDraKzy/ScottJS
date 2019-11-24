@@ -81,7 +81,7 @@ bot.on("ready", () => {
     }
     
     async function checkLimit() {
-        let nowDateMidnight = new Date(Date.now()).setHours(23,59,59)
+        let nowDateMidnight = new Date(Date.now()).setHours(23,58,00)
         const db = mongoUtil.getDb()
         let collection = db.collection("meta")
         let userDoc = await collection.findOne({usr: 'Scott'})
@@ -90,8 +90,12 @@ bot.on("ready", () => {
             resetLimit()
         } else {
             let midnight = userDoc["midnight"]
+            console.log(nowDateMidnight - Date.now())
+            console.log(nowDateMidnight)
+            console.log(Date.now())
             if ((midnight - nowDateMidnight) < 0) {
-                setTimeout(() => { resetLimit() }, (nowDateMidnight - Date.now()))
+                console.log('Timeout')
+                setTimeout(() => { resetLimit() }, (nowDateMidnight - Date.now() + 60000))
             }
         }
     }
