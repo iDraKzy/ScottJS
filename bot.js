@@ -65,42 +65,6 @@ bot.on("ready", () => {
         }
     })
 
-    async function resetLimit() {
-        let nowDateMidnight = new Date(Date.now()).setHours(23,59,59)
-        console.log('Reset Limit')
-        const db = mongoUtil.getDb()
-        let collection = db.collection("meta")
-        collection.updateOne({usr: 'Scott'}, {$set: {
-            midnight: nowDateMidnight
-        }})
-        let userCollection = db.collection("members")
-        userCollection.updateMany({}, {$set: {
-            won: 0
-        }})
-        checkLimit()
-    }
-    
-    async function checkLimit() {
-        let nowDateMidnight = new Date(Date.now()).setHours(23,58,00)
-        const db = mongoUtil.getDb()
-        let collection = db.collection("meta")
-        let userDoc = await collection.findOne({usr: 'Scott'})
-        console.log('Check Limit')
-        if (!userDoc.midnight) {
-            resetLimit()
-        } else {
-            let midnight = userDoc.midnight
-            console.log(nowDateMidnight - Date.now())
-            console.log(nowDateMidnight)
-            console.log(Date.now())
-            if ((midnight - nowDateMidnight) < 0) {
-                console.log('Timeout')
-                setTimeout(() => { resetLimit() }, (nowDateMidnight - Date.now() + 60000))
-            }
-        }
-    }
-
-    checkLimit()
     //Handle tempban
     const tempBanCollection = mongoUtil.getDb().collection("tempban")
     setInterval(async () => {
