@@ -118,11 +118,14 @@ bot.on("ready", () => {
                             .setTitle(`${bot.emotes.check} Vous avez été débanni du serveur ${bannedMemberGuild.name}`)
                             .setColor("#2ECC71")
                         bannedDMChannel.send(unbanTempEmbed)
-                        tempBanCollection.deleteOne({discord_id: bannedMember.user.id})
+                        tempBanCollection.deleteOne({discord_id: bannedUser.id})
+                    })
+                    .catch(() => {
+                        tempBanCollection.deleteOne({discord_id: bannedUser.id})
                     })
             }
         })
-    }, 60000)
+    }, 10000)
 
     //Handle Reminder
     const reminderCollection = mongoUtil.getDb().collection("reminders")
