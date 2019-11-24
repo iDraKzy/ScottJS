@@ -51,7 +51,7 @@ module.exports = class DailiesCommand extends Command {
                 gemToAdd * 2
                 break
         }
-        const currentGem = userDoc["money"] + gemToAdd
+        const currentGem = userDoc.money + gemToAdd
         if(currentDate - 1000 * 60 * 60 * 22 >= lastDailies) {
             //Give the gem if it was more than 22h since last dailies
             addMoney(msg.author.id, gemToAdd)

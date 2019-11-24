@@ -38,8 +38,8 @@ module.exports = class ConvertCommand extends Command {
         const collection = db.collection("members")
         let userDoc = await collection.findOne({discord_id: msg.author.id})
         let currentTime = moment().format("DD[/]MM[/]YYYY [à] HH[:]mm[:]ss")
-        let currentMoney = userDoc["money"]
-        let currentPoints = userDoc["points"]
+        let currentMoney = userDoc.money
+        let currentPoints = userDoc.points
         const convertErrorEmbed = new RichEmbed()
             .setTitle(`${this.client.emotes.cross} Convertion de gemmes de ${msg.author.username}`)
             .setThumbnail(msg.author.displayAvatarURL)

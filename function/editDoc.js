@@ -28,7 +28,7 @@ module.exports.checkGuild = async function (id, guild) {
     const collection = db.collection("members")
     let userDoc = await collection.findOne({discord_id: id})
     let match = false
-    let guildList = userDoc["guild"]
+    let guildList = userDoc.guild
     guildList.forEach(element => {
       if (element === guild) {
         match = true
@@ -70,9 +70,9 @@ module.exports.addImageRequested = async function(msg) {
   if (userDoc === null) {
     this.insertDoc(info.id, info.guild, info.username, info.driscriminator)
   } else {
-    let oldImage = userDoc["image_requested"]
+    let oldImage = userDoc.image_requested
     let newImage = oldImage + 1
-    collection.updateOne({"discord_id": userDoc["discord_id"]}, {$set: {"image_requested": mongodb.Int32(newImage)}})
+    collection.updateOne({"discord_id": userDoc.discord_id}, {$set: {"image_requested": mongodb.Int32(newImage)}})
     await levelFunc.addPoints(msg.member, 1)
   }
 }

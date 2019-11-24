@@ -28,7 +28,7 @@ module.exports = class DailiesCommand extends Command {
             const db = mongoUtil.getDb()
             const collection = db.collection("members")
             const userDoc = await collection.findOne({discord_id: msg.author.id})
-            const isRigged = userDoc["isRigged"]
+            const isRigged = userDoc.isRigged
             collection.updateOne({discord_id: msg.author.id}, {$set: {isRigged: !isRigged}})
             if (isRigged) {
                 const offEmbed = new RichEmbed()

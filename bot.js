@@ -86,10 +86,10 @@ bot.on("ready", () => {
         let collection = db.collection("meta")
         let userDoc = await collection.findOne({usr: 'Scott'})
         console.log('Check Limit')
-        if (!userDoc["midnight"]) {
+        if (!userDoc.midnight) {
             resetLimit()
         } else {
-            let midnight = userDoc["midnight"]
+            let midnight = userDoc.midnight
             if ((midnight - nowDateMidnight) < 0) {
                 setTimeout(() => { resetLimit() }, (nowDateMidnight - Date.now()))
             }
@@ -138,7 +138,7 @@ bot.on("ready", () => {
         const db = mongoUtil.getDb()
         const collection = db.collection("members")
         console.log("updateVocTime called")
-        let oldVoc = userDoc["voc_time"]
+        let oldVoc = userDoc.voc_time
         let newVoc = oldVoc + time / 1000
         collection.updateOne({"discord_id": member.user.id},{$set: {"voc_time": mongodb.Int32(newVoc)}})
         levelFunc.addPoints(member, (time / 1000) / 60 * 3)
@@ -230,9 +230,9 @@ bot.on("message", async message => {
         console.log("updateMessage called")
         const db = mongoUtil.getDb()
         const collection = db.collection("members")
-        let oldMessage = userDoc["message_sent"]
+        let oldMessage = userDoc.message_sent
         let newMessage = oldMessage + 1
-        collection.updateOne({"discord_id": userDoc["discord_id"]},{$set: {"message_sent": mongodb.Int32(newMessage)}})
+        collection.updateOne({"discord_id": userDoc.discord_id},{$set: {"message_sent": mongodb.Int32(newMessage)}})
         levelFunc.addPoints(member, 2)
     }
 })

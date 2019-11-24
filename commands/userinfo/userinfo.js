@@ -121,13 +121,13 @@ module.exports = class UserInfoCommand extends Command {
           ctx.clip()
           ctx.fillStyle = "#202020"
           ctx.fillRect(progressBarX, progressBarY, progressBarWidth, progressBarThickness)
-          let currentXp = userDoc["points"]
-          let necessaryXp = await getExpFromLevel(userDoc["level"] + 1)
+          let currentXp = userDoc.points
+          let necessaryXp = await getExpFromLevel(userDoc.level + 1)
           ctx.restore()
           ctx.save()
     
           //fil progress-bar
-          let nescessaryXpThisLevel = await getExpFromLevel(userDoc["level"])
+          let nescessaryXpThisLevel = await getExpFromLevel(userDoc.level)
           let currentXpProgressBar = currentXp - nescessaryXpThisLevel
           let necessaryXpProgressBar = necessaryXp - nescessaryXpThisLevel
     
@@ -168,7 +168,7 @@ module.exports = class UserInfoCommand extends Command {
           ctx.fillRect(levelRect.x, levelRect.y, levelWidth, levelHeight)
           ctx.fillStyle = "#FFFFFF"
           ctx.font = "10px Segoe UI"
-          let levelDoc = userDoc["level"]
+          let levelDoc = userDoc.level
           let levelSize = ctx.measureText(levelDoc).width
           const levelDisplay = {
             x: canvas.height / 2 - levelSize * 0.6,

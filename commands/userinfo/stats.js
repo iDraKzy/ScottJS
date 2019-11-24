@@ -51,13 +51,6 @@ module.exports = class StatsCommand extends Command {
         const currentDate = moment().format("DD/MM/YYYY [à] HH:mm:ss")
         let userDoc = await collection.findOne({"discord_id": user.id})
         console.log(userDoc)
-        let messageSent = userDoc["message_sent"]
-        let vocTime = userDoc["voc_time"]
-        let imagesRequest = userDoc["image_requested"]
-        let points = Math.round(userDoc["points"])
-        let level = userDoc["level"]
-        let money = userDoc["money"]
-
         let hour = roundTo.down(vocTime / 3600, 0)
         vocTime -= hour * 3600
         let minute = roundTo.down(vocTime / 60, 0)
@@ -71,12 +64,12 @@ module.exports = class StatsCommand extends Command {
             .setTitle(`Statistiques de ${user.username}`)
             .setColor("#2ECC71")
             .setThumbnail(user.displayAvatarURL)
-            .addField("Messages envoyés", messageSent, true)
-            .addField("Images demandés", imagesRequest, true)
-            .addField("Xp actuel", points, true)
-            .addField("Niveau actuel", level, true)
-            .addField("Temps passé dans un canal", vocTime)
-            .addField("Gemmes actuelles", `${money} :gem:`)
+            .addField("Messages envoyés", userDoc.message_sent, true)
+            .addField("Images demandés", userDoc.image_requested, true)
+            .addField("Xp actuel", Math.round(userDoc.points), true)
+            .addField("Niveau actuel", userDoc.level, true)
+            .addField("Temps passé dans un canal", userDoc.voc_time)
+            .addField("Gemmes actuelles", `${userDoc.money} :gem:`)
             .setFooter(`Demandé le ${currentDate}`)
         msg.say(statsEmbed)
 

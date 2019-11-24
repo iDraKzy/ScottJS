@@ -49,8 +49,8 @@ module.exports = class CoinFlipCommand extends Command {
         const lang = guildDoc["lang"]
         let translateCoinflip = new i18n_module(lang, "./../../translation/coinflip.json")
         let userDoc = await collection.findOne({discord_id: msg.author.id})
-        let currentMoney = userDoc["money"]
-        let isRigged = userDoc["isRigged"]
+        let currentMoney = userDoc.money
+        let isRigged = userDoc.isRigged
         switch(side) {
             case "face":
                 side = "head"
