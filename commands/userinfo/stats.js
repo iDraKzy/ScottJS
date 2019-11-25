@@ -49,7 +49,8 @@ module.exports = class StatsCommand extends Command {
         editDoc.checkGuild(msg.author.id, msg.member.guild.id)
         const collection = db.collection("members")
         const currentDate = moment().format("DD/MM/YYYY [à] HH:mm:ss")
-        let userDoc = await collection.findOne({"discord_id": user.id})
+        const userDoc = await collection.findOne({"discord_id": user.id})
+        let vocTime = userDoc.voc_time
         console.log(userDoc)
         let hour = roundTo.down(vocTime / 3600, 0)
         vocTime -= hour * 3600
@@ -68,7 +69,7 @@ module.exports = class StatsCommand extends Command {
             .addField("Images demandés", userDoc.image_requested, true)
             .addField("Xp actuel", Math.round(userDoc.points), true)
             .addField("Niveau actuel", userDoc.level, true)
-            .addField("Temps passé dans un canal", userDoc.voc_time)
+            .addField("Temps passé dans un canal", vocTime)
             .addField("Gemmes actuelles", `${userDoc.money} :gem:`)
             .setFooter(`Demandé le ${currentDate}`)
         msg.say(statsEmbed)
