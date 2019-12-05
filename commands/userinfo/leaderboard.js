@@ -7,7 +7,7 @@ module.exports = class LeaderboardCommand extends Command {
     constructor(bot) {
         super(bot, {
             name: 'leaderboard',
-            aliases: ["leader"],
+            aliases: ["leader", "lb"],
             group: 'userinfo',
             memberName: 'leaderboard',
             clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],

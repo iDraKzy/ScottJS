@@ -9,7 +9,7 @@ module.exports = class UserInfoCommand extends Command {
     constructor(bot) {
         super(bot, {
           name: "userinfo",
-          aliases: ["card", "profile"],
+          aliases: ["card", "profile", "ui", "p"],
           group: "userinfo",
           memberName: "userinfo",
           clientPermissions: ["SEND_MESSAGES", "VIEW_CHANNEL"],
