@@ -1,4 +1,6 @@
-const { Command } = require("discord.js-commando")
+const {
+	Command
+} = require("discord.js-commando")
 const mongoUtil = require("../../mongoUtil.js")
 const Canvas = require("canvas")
 const Attachment = require("discord.js").Attachment
@@ -6,182 +8,209 @@ const editDoc = require("../../function/editDoc.js")
 
 
 module.exports = class UserInfoCommand extends Command {
-    constructor(bot) {
-        super(bot, {
-          name: "userinfo",
-          aliases: ["card", "profile"],
-          group: "userinfo",
-          memberName: "userinfo",
-          clientPermissions: ["SEND_MESSAGES", "VIEW_CHANNEL"],
-          description: [
-              {
-                lang: "fr",
-                text: "Envoi votre profile utilisateur."
-              },
-              {
-                lang: "en",
-                text: "Send the profile your user profile."
-              }
-            ],
-          format: "!userinfo"
-        })
-    }
-    async run(msg) {
-      editDoc.checkGuild(msg.author.id, msg.member.guild.id)
-      function roundedImage(ctx, x, y, width, height, radius) {
-          ctx.beginPath();
-          ctx.moveTo(x + radius, y);
-          ctx.lineTo(x + width - radius, y);
-          ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
-          ctx.lineTo(x + width, y + height - radius);
-          ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
-          ctx.lineTo(x + radius, y + height);
-          ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
-          ctx.lineTo(x, y + radius);
-          ctx.quadraticCurveTo(x, y, x + radius, y);
-          ctx.closePath();
-        }
+	constructor(bot) {
+		super(bot, {
+			name: "userinfo",
+			aliases: ["card", "profile", "ui", "p"],
+			group: "userinfo",
+			memberName: "userinfo",
+			clientPermissions: ["SEND_MESSAGES", "VIEW_CHANNEL"],
+			description: [{
+					lang: "fr",
+					text: "Envoi votre profile utilisateur."
+				},
+				{
+					lang: "en",
+					text: "Send the profile your user profile."
+				}
+			],
+			format: "!userinfo",
+            args: [
+                {
+                    type: "user",
+                    prompt: "Quelle utilisateur souhaitez-vous connaître les stats ?",
+                    default: "",
+                    key: "userInfo"
+                }
+            ]
+		})
+	}
+	async run(msg, { userInfo }) {
+		let user, member
+        if (!userInfo) {
+			user = msg.author
+			member = msg.member
+        } else {
+			member = msg.guild.members.get(userInfo.id)
+			user = member.user
+		}
+		
+		let db, collection, userDoc, channel, rank, allUsers, AcessLevel, usrBack, typeColor, typeName, currentLevel, currentXp, neededXp, name, LevelMessage, RankMessage
+		channel = msg.channel
+		if (user.bot && ['628022462164107269', '642476723698532404'].indexOf(user.id) === -1) return;
+		if (['628022462164107269', '642476723698532404'].indexOf(user.id) > -1) {
+			name = 'Administrator'
+			LevelMessage = `Level Unknown`
+			RankMessage = `Rank Error`
+			typeName = 'System'
+			typeColor = '#E93939'
+			usrBack = 'https://media.discordapp.net/attachments/642479335000768523/652681251236610109/test.jpg'
+		} else {
+			const UserType = {
+				'Developer': {
+					display: 'Developer',
+					color: '#21d862'
+				},
+				'Staff': {
+					display: 'Staff',
+					color: '#916CE8'
+				},
+				'Friend': {
+					display: 'Friend',
+					color: '#4683FF'
+				},
+				'Contributor': {
+					display: 'Contributor',
+					color: '#E9A339'
+				},
+				'Premium': {
+					display: 'Premium',
+					color: '#FFE600'
+				},
+				'Human': {
+					display: 'Human',
+					color: '#B1B1B1'
+				},
+				'Banned': {
+					display: 'Banned',
+					color: '#E93939'
+				}
+			}
+			editDoc.checkGuild(user.id, member.guild.id)
+			db = mongoUtil.getDb()
+			collection = db.collection("members")
+			userDoc = await collection.findOne({ "discord_id": user.id })
+			rank = await (await collection.find({}).sort({ points: -1 }).toArray()).map((object) => { return object.discord_id }).indexOf(user.id)
+			allUsers = await collection.countDocuments()
+			AcessLevel = (!userDoc.accessLevel) ? 'Human' : userDoc.accessLevel
+			usrBack = (!userDoc.cardBackground) ? 'https://i.pinimg.com/originals/6f/e0/50/6fe05014404f18ae55970e61ed7692fb.jpg' : userDoc.cardBackground
+			typeColor = UserType[AcessLevel].color
+			typeName = UserType[AcessLevel].display
+			currentLevel = userDoc.level
+			currentXp = userDoc.points
+			neededXp = await getExpFromLevel(userDoc.level + 1)
+			name = ((member.displayName.length > 16) && (user.username.length < member.displayName.length)) ? user.username : member.displayName
+			LevelMessage = `Level ${currentLevel} (${currentXp} / ${neededXp})`
+			RankMessage = `Rank #${rank} / ${allUsers}`
+			if (user.id === '263275868313354240') {
+				LevelMessage = `Level 72 (63 / 0)`
+				RankMessage = `Rank -1 / ${allUsers}`
+			}
+		}
+		function applyText(canvas, text) {
+			const ctx = canvas.getContext("2d")
+			let fontSize = 26
+			do {
+				ctx.font = `${fontSize -= 1}px "Segoe Bold"`
+			} while (ctx.measureText(text).width > 250)
 
-        function applyText(canvas, text) {
-            const ctx = canvas.getContext("2d")
-        
-            let fontSize = 26
-        
-            do {
-                ctx.font = `bold ${fontSize -= 1}px Segoe UI`
-            } while (ctx.measureText(text).width > canvas.width - 100)
-        
-            return ctx.font
-          }
+			return ctx.font
+		}
 
-        function getUsername(username, nickname) {
-            if(nickname === null || nickname.length < 4) {
-                return username
-              } else {
-                return nickname
-              }
-          }
+		function getExpFromLevel(level) {
+			if (level <= 1) {
+				return 0
+			} else {
+				return (getExpFromLevel(level - 1) + (100 * (level - 1)))
+			}
+		}
+		Canvas.registerFont(`./fonts/Segoe UI.ttf`, { family: "Segoe"});
+		Canvas.registerFont(`./fonts/Segoe UI Semibold.ttf`, { family: "Segoe Semibold"});
+		Canvas.registerFont(`./fonts/Segoe UI Bold.ttf`, { family: "Segoe Bold"});
 
-          function getExpFromLevel(level) {
-            if (level <= 1) {
-                return 0   
-            } else {
-                return (getExpFromLevel(level - 1) + (100 * (level - 1)))
-            }
-          }
-          const width = 420
-          const height = 100
-          const backgroundImage = "sao.jpg"
-        
-          const db = mongoUtil.getDb()
-          const collection = db.collection("members")
-          let userDoc = await collection.findOne({"discord_id": msg.author.id})
-          const channel = msg.channel
-    
-          const canvas = Canvas.createCanvas(width, height)
-          const ctx = canvas.getContext("2d")
-          const imageSize = canvas.height * 0.84
-          const imageMargin = canvas.height * 0.16
-          //background
-          roundedImage(ctx, 0, 0, canvas.width, canvas.height, 30)
-          ctx.clip()
-          const background = await Canvas.loadImage(`./background/${backgroundImage}`)
-          ctx.drawImage(background, 0, 0, canvas.width, canvas.height)
-          ctx.save()
-    
-          //username
-          ctx.shadowColor = "black"
-          ctx.shadowOffsetX = 6
-          ctx.shadowOffsetY = 6
-          ctx.shadowBlur = 6
-    
-          let username = getUsername(msg.author.username, msg.member.nickname)
-          ctx.font = applyText(canvas, username)
-          ctx.fillStyle = "#FFFFFF"
-          ctx.fillText(username, canvas.width / 4.3, canvas.height * 0.45)
-          
-          //display role
-          let role = msg.member.highestRole.name
-          if(role == "@everyone") {
-            role = ""
-          }
-          ctx.font = "20px Segoe UI"
-          ctx.fillText(role, canvas.height / 2 + 1.1 * imageSize / 2, canvas.height * 0.7)
-    
-          //setup progress-bar
-          let progressBarThickness = canvas.height * 0.07
-          let progressBarX = canvas.height / 2
-          let progressBarY = canvas.height / 2 - imageSize / 2
-          let progressBarWidth = canvas.width - imageSize / 2 - 20
-          ctx.shadowOffsetX = 0
-          ctx.shadowOffsetY = 0
-          ctx.shadowBlur = 0
-    
-          roundedImage(ctx, progressBarX, progressBarY, progressBarWidth, progressBarThickness, 5)
-          ctx.clip()
-          ctx.fillStyle = "#202020"
-          ctx.fillRect(progressBarX, progressBarY, progressBarWidth, progressBarThickness)
-          let currentXp = userDoc.points
-          let necessaryXp = await getExpFromLevel(userDoc.level + 1)
-          ctx.restore()
-          ctx.save()
-    
-          //fil progress-bar
-          let nescessaryXpThisLevel = await getExpFromLevel(userDoc.level)
-          let currentXpProgressBar = currentXp - nescessaryXpThisLevel
-          let necessaryXpProgressBar = necessaryXp - nescessaryXpThisLevel
-    
-          let percentAchieved = Math.round(currentXpProgressBar) / necessaryXpProgressBar
-          let progress = progressBarWidth * percentAchieved
-          if(percentAchieved !== 0) {
-            roundedImage(ctx, progressBarX, progressBarY, progress, progressBarThickness, 5)
-            ctx.clip()
-            ctx.fillStyle = "#0087EE"
-            ctx.fillRect(progressBarX, progressBarY, progress, progressBarThickness)
-          }
-          ctx.restore()
-          ctx.save()
-    
-          //avatar
-          ctx.beginPath()
-          ctx.arc(canvas.height / 2, canvas.height / 2, imageSize / 2, 0, Math.PI * 2, true)
-          ctx.closePath()
-          ctx.clip()
-    
-          const avatar = await Canvas.loadImage(msg.author.displayAvatarURL)
-          let y
-          let x = y = canvas.height / 2 - imageSize / 2
-          ctx.drawImage(avatar, x, y, imageSize, imageSize)
-          ctx.restore()
-          ctx.save()
-    
-          //display level
-          let levelWidth = canvas.width * 0.07
-          let levelHeight = canvas.height  * 0.12
-          const levelRect = {
-            x: canvas.height / 2 - levelWidth / 2,
-            y: canvas.height - imageMargin,
-          }
-          roundedImage(ctx, levelRect.x, levelRect.y, levelWidth, levelHeight, 7)
-          ctx.clip()
-          ctx.fillStyle = "#202020"
-          ctx.fillRect(levelRect.x, levelRect.y, levelWidth, levelHeight)
-          ctx.fillStyle = "#FFFFFF"
-          ctx.font = "10px Segoe UI"
-          let levelDoc = userDoc.level
-          let levelSize = ctx.measureText(levelDoc).width
-          const levelDisplay = {
-            x: canvas.height / 2 - levelSize * 0.6,
-            y: levelRect.y + levelHeight * 0.75
-          }
-          ctx.fillText(levelDoc, levelDisplay.x, levelDisplay.y)
-          ctx.restore()
-          ctx.save()
-    
-    
-          const attachment = new Attachment(canvas.toBuffer(), "user_card.png");
-          channel.send(attachment)
+		const cardWidth = 690
+		const cardHeight = 122
+		// const rank = 1
+		// const allUsers = 109302
+		
+		
+		const canvas = Canvas.createCanvas(cardWidth, cardHeight)
+		const ctx = canvas.getContext('2d')
 
-          
-    }
+		
+		/*
+		name = 'Administrator'
+		LevelMessage = `Level Unknown`
+		RankMessage = `Rank Error`
+		typeName = 'System'
+		*/
+
+		const userAvatar = await Canvas.loadImage(user.displayAvatarURL)
+		const userBackground = await Canvas.loadImage(usrBack)
+		const newHeight = (userBackground.height * cardWidth) / userBackground.width
+		ctx.beginPath()
+		ctx.arc((cardHeight / 2), (cardHeight / 2), (cardHeight / 2), 0.5 * Math.PI, 1.5 * Math.PI);
+		ctx.lineTo(cardWidth - (cardHeight / 2), 0)
+		ctx.arc(cardWidth - (cardHeight / 2), (cardHeight / 2), (cardHeight / 2), 1.5 * Math.PI, 2.5 * Math.PI);
+		ctx.lineTo((cardHeight / 2), cardHeight)
+		ctx.clip()
+		ctx.fill('#FFFFFF')
+		ctx.drawImage(userBackground, 0, -((newHeight / 2) - (cardHeight / 2)), cardWidth, newHeight)
+		ctx.restore()
+		ctx.save()
+
+		/* Userinfo Form */
+		ctx.beginPath()
+		ctx.moveTo(0, 0)
+		ctx.lineTo((cardWidth / 2) + 60, 0)
+		ctx.lineTo((cardWidth / 2), cardHeight)
+		ctx.lineTo(0, cardHeight)
+		ctx.globalAlpha = 0.7;
+		ctx.globalCompositeOperation = 'multiply'
+		ctx.fillStyle = '#2B2B2B'
+		ctx.fill()
+		ctx.restore()
+		ctx.save()
+
+		/* User Border */
+		ctx.beginPath();
+		ctx.arc((cardHeight * 0.05) + ((cardHeight * 0.9) / 2), cardHeight / 2, (cardHeight * 0.9) / 2, 0, Math.PI * 2);
+		ctx.clip()
+		ctx.fillStyle = typeColor
+		ctx.fill()
+		ctx.restore()
+		ctx.save()
+
+		/* User Avatar */
+		ctx.beginPath();
+		ctx.arc((cardHeight * 0.05) + ((cardHeight * 0.9) / 2) + 0, cardHeight / 2, ((cardHeight * 0.9) / 2) - 3, 0, Math.PI * 2);
+		ctx.clip()
+		ctx.drawImage(userAvatar, (cardHeight * 0.05), (cardHeight * 0.05), (cardHeight * 0.9), (cardHeight * 0.9))
+		ctx.restore()
+		ctx.save()
+
+		/* Text */
+		// Username
+		ctx.font = applyText(canvas, name)
+		ctx.fillStyle = '#FFFFFF'
+		ctx.fillText(name, 134, 35 + 2)
+
+		// Type
+		ctx.font = '22px "Segoe Semibold"'
+		ctx.fillStyle = typeColor
+		ctx.fillText(typeName, 134, 28 + 35)
+
+		// Level
+		ctx.font = '17px "Segoe"'
+		ctx.fillStyle = '#FFFFFF'
+		ctx.fillText(LevelMessage, 134, 22 + 65)
+
+		// Rank
+		ctx.font = '17px "Segoe"'
+		ctx.fillStyle = '#FFFFFF'
+		ctx.fillText(RankMessage, 134, 22 + 88)
+
+		const attachment = new Attachment(canvas.toBuffer(), "user_card.png");
+		channel.send(attachment)
+	}
 }
