@@ -53,7 +53,7 @@ module.exports = class HelpCommand extends Command {
                 let tempCommand = []
                 let displayTempCommand = []
                 group.commands.forEach(command => {
-                    if (command.ownerOnly !== true) {
+                    if (command.hidden === false && command.ownerOnly === false) {
                         tempCommand.push(command)
                         displayTempCommand.push(command.name)
                     }
