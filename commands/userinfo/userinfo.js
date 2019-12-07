@@ -24,46 +24,88 @@ module.exports = class UserInfoCommand extends Command {
 					text: "Send the profile your user profile."
 				}
 			],
-			format: "!userinfo"
+			format: "!userinfo",
+            args: [
+                {
+                    type: "user",
+                    prompt: "Quelle utilisateur souhaitez-vous connaître les stats ?",
+                    default: "",
+                    key: "userInfo"
+                }
+            ]
 		})
 	}
-	async run(msg) {
-		editDoc.checkGuild(msg.author.id, msg.member.guild.id)
-		const db = mongoUtil.getDb()
-		const collection = db.collection("members")
-		let userDoc = await collection.findOne({ "discord_id": msg.author.id })
-		const channel = msg.channel
-
-		const AcessLevel = (!userDoc.accessLevel) ? 'Human' : userDoc.accessLevel
-		console.log(AcessLevel)
-		const UserType = {
-			'Developer': {
-				display: 'Developer',
-				color: '#21d862'
-			},
-			'Staff': {
-				display: 'Staff',
-				color: '#916CE8'
-			},
-			'Friend': {
-				display: 'Friend',
-				color: '#4683FF'
-			},
-			'Contributor': {
-				display: 'Contributor',
-				color: '#E9A339'
-			},
-			'Premium': {
-				display: 'Premium',
-				color: '#FFE600'
-			},
-			'Human': {
-				display: 'Human',
-				color: '#B1B1B1'
-			},
-			'Banned': {
-				display: 'Banned',
-				color: '#E93939'
+	async run(msg, { userInfo }) {
+		let user, member
+        if (!userInfo) {
+			user = msg.author
+			member = msg.member
+        } else {
+			member = msg.guild.members.get(userInfo.id)
+			user = member.user
+		}
+		
+		let db, collection, userDoc, channel, rank, allUsers, AcessLevel, usrBack, typeColor, typeName, currentLevel, currentXp, neededXp, name, LevelMessage, RankMessage
+		channel = msg.channel
+		if (user.bot && ['628022462164107269', '642476723698532404'].indexOf(user.id) === -1) return;
+		if (['628022462164107269', '642476723698532404'].indexOf(user.id) > -1) {
+			name = 'Administrator'
+			LevelMessage = `Level Unknown`
+			RankMessage = `Rank Error`
+			typeName = 'System'
+			typeColor = '#E93939'
+			usrBack = 'https://media.discordapp.net/attachments/642479335000768523/652681251236610109/test.jpg'
+		} else {
+			const UserType = {
+				'Developer': {
+					display: 'Developer',
+					color: '#21d862'
+				},
+				'Staff': {
+					display: 'Staff',
+					color: '#916CE8'
+				},
+				'Friend': {
+					display: 'Friend',
+					color: '#4683FF'
+				},
+				'Contributor': {
+					display: 'Contributor',
+					color: '#E9A339'
+				},
+				'Premium': {
+					display: 'Premium',
+					color: '#FFE600'
+				},
+				'Human': {
+					display: 'Human',
+					color: '#B1B1B1'
+				},
+				'Banned': {
+					display: 'Banned',
+					color: '#E93939'
+				}
+			}
+			editDoc.checkGuild(user.id, member.guild.id)
+			db = mongoUtil.getDb()
+			collection = db.collection("members")
+			userDoc = await collection.findOne({ "discord_id": user.id })
+			rank = await (await collection.find({}).sort({ points: -1 }).toArray()).map((object) => { return object.discord_id }).indexOf(user.id)
+			allUsers = await collection.countDocuments()
+			AcessLevel = (!userDoc.accessLevel) ? 'Human' : userDoc.accessLevel
+			usrBack = (!userDoc.cardBackground) ? 'https://i.pinimg.com/originals/6f/e0/50/6fe05014404f18ae55970e61ed7692fb.jpg' : userDoc.cardBackground
+			typeColor = UserType[AcessLevel].color
+			typeName = UserType[AcessLevel].display
+			currentLevel = userDoc.level
+			currentXp = userDoc.points
+			neededXp = await getExpFromLevel(userDoc.level + 1)
+			name = ((member.displayName.length > 16) && (user.username.length < member.displayName.length)) ? user.username : member.displayName
+			LevelMessage = `Level ${currentLevel} (${currentXp} / ${neededXp})`
+			RankMessage = `Rank #${rank} / ${allUsers}`
+			if (user.id === '263275868313354240') {
+				LevelMessage = `Level 72 (63 / 0)`
+				RankMessage = `Rank -1 / ${allUsers}`
+				usrBack = 'http://www.4usky.com/data/out/90/164818238-sword-art-online-wallpapers.jpg'
 			}
 		}
 		function applyText(canvas, text) {
@@ -89,25 +131,23 @@ module.exports = class UserInfoCommand extends Command {
 
 		const cardWidth = 690
 		const cardHeight = 122
-
-		const userAvatar = await Canvas.loadImage(msg.author.displayAvatarURL)
-		const usrBack = (!userDoc.cardBackground) ? 'https://i.pinimg.com/originals/6f/e0/50/6fe05014404f18ae55970e61ed7692fb.jpg' : userDoc.cardBackground
-		const userBackground = await Canvas.loadImage(usrBack)
-
-		const typeColor = UserType[AcessLevel].color
-		const typeName = UserType[AcessLevel].display
-		const rank = 1
-		const allUsers = 109302
-		const currentLevel = userDoc.level
-		const currentXp = userDoc.points
-		const neededXp = await getExpFromLevel(userDoc.level + 1)
-		const name = ((msg.member.displayName.length > 16) && (msg.author.username.length < msg.member.displayName.length)) ? msg.author.username : msg.member.displayName
-
-
+		// const rank = 1
+		// const allUsers = 109302
+		
+		
 		const canvas = Canvas.createCanvas(cardWidth, cardHeight)
 		const ctx = canvas.getContext('2d')
 
+		
+		/*
+		name = 'Administrator'
+		LevelMessage = `Level Unknown`
+		RankMessage = `Rank Error`
+		typeName = 'System'
+		*/
 
+		const userAvatar = await Canvas.loadImage(user.displayAvatarURL)
+		const userBackground = await Canvas.loadImage(usrBack)
 		const newHeight = (userBackground.height * cardWidth) / userBackground.width
 		ctx.beginPath()
 		ctx.arc((cardHeight / 2), (cardHeight / 2), (cardHeight / 2), 0.5 * Math.PI, 1.5 * Math.PI);
@@ -164,12 +204,12 @@ module.exports = class UserInfoCommand extends Command {
 		// Level
 		ctx.font = '17px "Segoe"'
 		ctx.fillStyle = '#FFFFFF'
-		ctx.fillText(`Level ${currentLevel} (${currentXp} / ${neededXp})`, 134, 22 + 65)
+		ctx.fillText(LevelMessage, 134, 22 + 65)
 
 		// Rank
 		ctx.font = '17px "Segoe"'
 		ctx.fillStyle = '#FFFFFF'
-		ctx.fillText('Rank #? / Soon™', 134, 22 + 88)
+		ctx.fillText(RankMessage, 134, 22 + 88)
 
 		const attachment = new Attachment(canvas.toBuffer(), "user_card.png");
 		channel.send(attachment)

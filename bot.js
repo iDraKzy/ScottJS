@@ -89,7 +89,7 @@ bot.on("ready", () => {
                     })
             }
         })
-    }, 10000)
+    }, 60000)
 
     //Handle Reminder
     const reminderCollection = mongoUtil.getDb().collection("reminders")
