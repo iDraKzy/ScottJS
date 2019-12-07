@@ -105,7 +105,6 @@ module.exports = class UserInfoCommand extends Command {
 			if (user.id === '263275868313354240') {
 				LevelMessage = `Level 72 (63 / 0)`
 				RankMessage = `Rank -1 / ${allUsers}`
-				usrBack = 'http://www.4usky.com/data/out/90/164818238-sword-art-online-wallpapers.jpg'
 			}
 		}
 		function applyText(canvas, text) {
