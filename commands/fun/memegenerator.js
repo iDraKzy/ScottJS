@@ -3,6 +3,8 @@ const { RichEmbed } = require("discord.js")
 const request = require("request")
 const botSettings = require("../../botsettings.json")
 const moment = require("moment")
+const fetch = require("node-fetch")
+const FormData = require("form-data")
 
 module.exports = class MemeCommand extends Command {
     constructor(bot) {
@@ -110,17 +112,20 @@ module.exports = class MemeCommand extends Command {
                 password: botSettings.imgFlipPassword,
                 boxes: queryBox
             }
-            request.post(url, { form: query}, (err, response, body) => {
-                if (err) throw err
-                let currentDate = moment().format("DD[/]MM[/]YYYY [à] HH[:]mm[:]ss")
-                let generatedMeme = JSON.parse(body).data.url
-                const memeEmbed = new RichEmbed()
-                    .setTitle(`Voici le meme demandé par ${msg.author.username}`)
-                    .setColor("#9B59B6")
-                    .setImage(generatedMeme)
-                    .setFooter(`Généré le ${currentDate}`)
-                msg.say(memeEmbed)
-            })
+            let boxes = query.boxes.map((k, i) => { return `boxes[${i}][text]=${encodeURIComponent(k.text)}`}).join('&')
+            let params = `?template_id=${query.template_id}&username=${query.username}&password=${encodeURIComponent(query.password)}&${boxes}`
+            fetch(url + params, {method: 'POST'})
+                .then(res => res.json())
+                .then(json => {
+                    let currentDate = moment().format("DD[/]MM[/]YYYY [à] HH[:]mm[:]ss")
+                    let generatedMeme = json.data.url
+                    const memeEmbed = new RichEmbed()
+                        .setTitle(`Voici le meme demandé par ${msg.author.username}`)
+                        .setColor("#9B59B6")
+                        .setImage(generatedMeme)
+                        .setFooter(`Généré le ${currentDate}`)
+                    msg.say(memeEmbed)
+                })
 
         }
         
