@@ -27,7 +27,7 @@ module.exports = class LanguageCommand extends Command {
             type: "string",
             prompt: "Which language do you want to use ? (french/english)",
             key: "lang",
-            oneOf: ["french", "english"],
+            oneOf: ["french", "english", "fr", "en"],
             error: "french et english seulent"
         }],
         userPermissions: ["MANAGE_GUILD"]
@@ -40,15 +40,12 @@ module.exports = class LanguageCommand extends Command {
         const guildCollection = db.collection("guilds")
         const currentTime = moment().format("DD/MM/YYYY [à] HH:mm:ss")
         let langDisplay
-        switch(lang) {
-            case "french":
-                lang = "fr"
-                langDisplay = "français"
-                break
-            case "english":
-                lang = "en"
-                langDisplay = "anglais"
-                break
+        if (lang === "fr" || "french") {
+            lang = "fr"
+            langDisplay = "français"
+        } else if (lang === "en" || "english") {
+            lang = "en"
+            langDisplay = "anglais"
         }
         console.log(lang)
         guildCollection.updateOne({guild_id: guild}, {$set: {lang: lang}})

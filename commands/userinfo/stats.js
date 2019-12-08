@@ -38,6 +38,8 @@ module.exports = class StatsCommand extends Command {
         })
     }
     async run(msg, { user }) {
+
+        //Handler if user is specified
         if (!user) {
             user = msg.author
         } else {
@@ -52,6 +54,8 @@ module.exports = class StatsCommand extends Command {
         const userDoc = await collection.findOne({"discord_id": user.id})
         let vocTime = userDoc.voc_time
         console.log(userDoc)
+
+        //Stringify the vocTime
         let hour = roundTo.down(vocTime / 3600, 0)
         vocTime -= hour * 3600
         let minute = roundTo.down(vocTime / 60, 0)
@@ -61,6 +65,8 @@ module.exports = class StatsCommand extends Command {
         minute = addZero(minute)
         second = addZero(second)
         vocTime = hour + ":" + minute + ":" + second
+
+        //Create and send the Embed
         let statsEmbed = new RichEmbed()
             .setTitle(`Statistiques de ${user.username}`)
             .setColor("#2ECC71")

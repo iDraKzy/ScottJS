@@ -64,7 +64,6 @@ module.exports = class ReminderCommand extends Command {
                 mins += Number(element.substring(0, element.length - 1)) * charNumb[element.replace(/[0-9]/gm, '')] 
             }
         })
-        console.log(mins)
         const minsMS = mins * 60 * 1000
         const query = {
             discord_id: msg.author.id,
