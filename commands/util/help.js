@@ -38,18 +38,23 @@ module.exports = class HelpCommand extends Command {
         const guildCollection = db.collection("guilds")
         const guildDoc = await guildCollection.findOne({guild_id: msg.guild.id})
         const lang = guildDoc["lang"]
-        console.log(lang)
         let translateHelp = new i18n_module(lang, "./../../translation/help.json")
+
+        //Messages when no commands are specified
         if (command == "undefined") {
+
+            //Create the emebed
             const helpEmbed = new RichEmbed()
                 .setTitle(`${translateHelp.__("availableCommand")} ${this.client.user.username}`)
                 .setColor("#3498DB")
                 .setDescription(translateHelp.__("reactWith"))
                 .setFooter(translateHelp.__("stopReact"))
 
+            //Create the groups of commands
             let tempGroup = []
             this.client.registry.groups.forEach(group => {
                 
+                //Populate the groups
                 let tempCommand = []
                 let displayTempCommand = []
                 group.commands.forEach(command => {
@@ -65,11 +70,17 @@ module.exports = class HelpCommand extends Command {
                 })
                 helpEmbed.addField(`**${group.name}**`, displayTempCommand.join(", "))
             })
+
+            //Add the hardcoded field for the bot's invitation
             helpEmbed.addField(":robot: **Scott**", translateHelp.__("addMe"))
+
+            //Create reactions
             const messageSent = await msg.say(helpEmbed)
-            for(let i = 0; i < tempGroup.length; i++) { //generate reaction emoji for all groups
+            for(let i = 0; i < tempGroup.length; i++) {
                 await messageSent.react(tempGroup[i].emoji)
             }
+
+            //Reaction handler for details of a group
             const filter = (reaction, user) => user.id === msg.author.id
             const reactionCollector = messageSent.createReactionCollector(filter, {time: 180000})
             let commandEmbed = generateEmbed() //reset embed for embed editing
@@ -79,7 +90,7 @@ module.exports = class HelpCommand extends Command {
                     commandEmbed.setTitle(`${translateHelp.__("categoryInfo")} ${category.name}`)
                     commandEmbed.addField(`**${command.name.charAt(0).toUpperCase() + command.name.slice(1)}**`, command.description.find(desc => desc.lang === lang).text)
                 })
-                await res.remove()
+                await res.remove() //remove the reaction once it has been processed
                 if (subMessages === undefined) {
                     subMessages = await msg.say(commandEmbed)
                 } else {
@@ -88,8 +99,10 @@ module.exports = class HelpCommand extends Command {
                 commandEmbed = {}
                 commandEmbed = generateEmbed()
             })
-            reactionCollector.on("end", res => messageSent.clearReactions())
+            reactionCollector.on("end", res => messageSent.clearReactions()) //Remove the reactions once the bot isn't supposed to react to them
         } else {
+
+            //Send the details about one command when a command is specified
             const currentDate = moment().format(translateHelp.__("dateFormat"))
             const commandInfoEmbed = new RichEmbed()
                 .setTitle(`${translateHelp.__("commandInfo")} ${command.name.charAt(0).toUpperCase() + command.name.slice(1)}`)
