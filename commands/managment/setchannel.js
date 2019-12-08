@@ -61,7 +61,7 @@ module.exports = class SetChannelCommand extends Command {
         const setChannelEmbed = new RichEmbed()
             .setTitle(`${this.client.emotes.check} Nouveau channel ${type} défini`)
             .setColor("#34495E")
-            .setThumbnail(msg.author.displayAvatarURL)
+            .setThumbnail(msg.member.guild.iconURL)
             .setDescription(`Nouveau channel défini sur <#${channel}>`)
             .setFooter(`Effectué le ${currentTime}`)
         msg.say(setChannelEmbed)

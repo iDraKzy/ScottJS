@@ -40,20 +40,20 @@ module.exports = class LanguageCommand extends Command {
         const guildCollection = db.collection("guilds")
         const currentTime = moment().format("DD/MM/YYYY [à] HH:mm:ss")
         let langDisplay
-        if (lang === "fr" || "french") {
+        if (lang === ("fr" || "french")) {
             lang = "fr"
             langDisplay = "français"
-        } else if (lang === "en" || "english") {
+        } else if (lang === ("en" || "english")) {
             lang = "en"
             langDisplay = "anglais"
         }
-        console.log(lang)
+        console.log(lang, langDisplay)
         guildCollection.updateOne({guild_id: guild}, {$set: {lang: lang}})
         const changeLanguageEmbed = new RichEmbed()
             .setTitle(`${this.client.emotes.check} Nouvelle langue définie sur ${langDisplay}`)
             .setDescription(":warning: Les messages systèmes sont en anglais pour l'instant")
             .setColor("#34495E")
-            .setThumbnail(msg.author.displayAvatarURL)
+            .setThumbnail(msg.member.guild.iconURL)
             .setFooter(`Effectué le ${currentTime}`)
         msg.say(changeLanguageEmbed)
     }
