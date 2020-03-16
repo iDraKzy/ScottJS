@@ -23,7 +23,6 @@ const bot = new Client({
 bot.registry
   .registerDefaultTypes()
   .registerGroups([
-    ["music", "🎵 Music"],
     ["fun", "🎉 Fun"],
     ["tvshow", "📺 TV Show"],
     ["userinfo", "ℹ User Info"],
