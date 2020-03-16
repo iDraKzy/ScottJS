@@ -52,21 +52,16 @@ module.exports = class HelpCommand extends Command {
 
             //Create the groups of commands
             let tempGroup = []
-            // console.log(this.client.registry.groups)
             this.client.registry.groups.forEach(group => {
-                // console.log(group)
                 
                 //Populate the groups
                 let tempCommand = []
                 let displayTempCommand = []
-                // console.log(group.commands)
                 group.commands.forEach(command => {
-                    console.log(command)
                     tempCommand.push(command.hidden, command.undefined)
                     let valid = [false, undefined]
                     if (valid.indexOf(command.hidden) != -1 && valid.indexOf(command.ownerOnly) != -1) {
                         displayTempCommand.push(command.name)
-                        console.log(command)
                     }
                 })
                 tempGroup.push({
@@ -74,7 +69,6 @@ module.exports = class HelpCommand extends Command {
                     emoji: group.name.match(/(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/)[0], //get the emoji out of the string
                     commands: tempCommand
                 })
-                console.log(displayTempCommand)
                 helpEmbed.addField(`**${group.name}**`, displayTempCommand.join(", "))
             })
 
