@@ -1,0 +1,8 @@
+{
+    "prefix": "YOUR_PREFIX",
+    "token": "YOUR_BOT_TOKEN",
+    "youtubeAPI": "YOUR_YOUTUBE_API_TOKEN",
+    "imgFlipUsername": "YOUR_IMGFLIP_USERNAME",
+    "imgFlipPassword": "YOUR_IMGFLIP_PASSWORD",
+    "mongoDBPassword": "YOUR_MONGODB_PASSWORD"
+}
