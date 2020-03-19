@@ -67,7 +67,6 @@ bot.on("ready", () => {
     //Handle tempban
     const tempBanCollection = mongoUtil.getDb().collection("tempban")
     setInterval(async () => {
-        console.info("Tempban handler called")
         const tempBanList = await tempBanCollection.find()
         const currentTime = Date.now()
         tempBanList.forEach(async ban => {
@@ -93,7 +92,6 @@ bot.on("ready", () => {
     //Handle Reminder
     const reminderCollection = mongoUtil.getDb().collection("reminders")
     setInterval(async () => {
-        console.log("Reminder handler called")
         const reminderList = await reminderCollection.find()
         const currentTime = Date.now()
         reminderList.forEach(reminder => {
@@ -116,7 +114,6 @@ bot.on("ready", () => {
 
     //xp VocTime
     async function createDocOrUpdateVocTime(member) {
-        console.log("findandCreateDoc called")
         const db = mongoUtil.getDb()
         const collection = db.collection("members")
         let userDoc = await collection.findOne({"discord_id": member.user.id.toString(10)})
@@ -131,7 +128,6 @@ bot.on("ready", () => {
     function updateVocTime(userDoc, member) {
         const db = mongoUtil.getDb()
         const collection = db.collection("members")
-        console.log("updateVocTime called")
         let oldVoc = userDoc.voc_time
         let newVoc = oldVoc + time / 1000
         collection.updateOne({"discord_id": member.user.id},{$set: {"voc_time": mongodb.Int32(newVoc)}})
@@ -142,7 +138,6 @@ bot.on("ready", () => {
     let time = 60000
 
     setInterval(() => {
-        console.log("setInterval called")
         bot.channels.forEach(channel => {
         if (channel.type === "voice") {
             channel.members.forEach(client => {
@@ -222,7 +217,6 @@ bot.on("message", async message => {
         }
 
     function updateMessage(userDoc, member) {
-        console.log("updateMessage called")
         const db = mongoUtil.getDb()
         const collection = db.collection("members")
         let oldMessage = userDoc.message_sent
