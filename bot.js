@@ -27,7 +27,7 @@ bot.registry
     ["tvshow", "📺 TV Show"],
     ["userinfo", "ℹ User Info"],
     ["economy", "💎 Economy"],
-    ["managment", "🛠️ Server Managment"],
+    ["managment", "🔨 Server Managment"],
     ["moderation", "⚖ Moderation"]
   ])
   .registerDefaultGroups()
