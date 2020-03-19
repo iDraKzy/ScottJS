@@ -7,7 +7,7 @@ module.exports = class ReportCommand extends Command {
         super(bot, {
         name: 'report',
         aliases: ["r"],
-        group: 'managment',
+        group: 'util',
         memberName: 'report',
         clientPermissions: ["SEND_MESSAGES", "MANAGE_CHANNELS", "VIEW_CHANNEL", "MANAGE_MESSAGES", "ADD_REACTIONS"],
         description: [
