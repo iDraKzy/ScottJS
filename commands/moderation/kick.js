@@ -6,7 +6,7 @@ module.exports = class KickCommand extends Command {
         super(bot, {
         name: 'kick',
         aliases: ["eject"],
-        group: 'managment',
+        group: 'moderation',
         memberName: 'kick',
         clientPermissiosn: ["KICK_MEMBERS", "VIEW_CHANNEL"],
         description: [

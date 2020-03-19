@@ -7,7 +7,7 @@ module.exports = class BypassCommand extends Command {
         super(bot, {
         name: 'togglerole',
         aliases: ["tr"],
-        group: 'managment',
+        group: 'util',
         memberName: 'togglerole',
         clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES", "MANAGE_ROLES"],
         description: [

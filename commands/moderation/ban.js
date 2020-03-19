@@ -8,7 +8,7 @@ module.exports = class BanCommand extends Command {
         super(bot, {
         name: 'ban',
         aliases: ["ban"],
-        group: 'managment',
+        group: 'moderation',
         memberName: 'ban',
         description: [
             {
