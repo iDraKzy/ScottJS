@@ -57,7 +57,7 @@ module.exports = class HelpCommand extends Command {
                 let tempCommand = []
                 let displayTempCommand = []
                 group.commands.forEach(command => {
-                    tempCommand.push(command.hidden, command.undefined)
+                    tempCommand.push(command)
                     let valid = [false, undefined]
                     if (valid.indexOf(command.hidden) != -1 && valid.indexOf(command.ownerOnly) != -1) {
                         displayTempCommand.push(command.name)
@@ -66,7 +66,8 @@ module.exports = class HelpCommand extends Command {
                 tempGroup.push({
                     name: group.name,
                     emoji: group.name.match(/(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/)[0], //get the emoji out of the string
-                    commands: tempCommand
+                    commands: tempCommand,
+                    displayCommands: displayTempCommand
                 })
                 helpEmbed.addField(`**${group.name}**`, displayTempCommand.join(", "))
             })
@@ -85,8 +86,12 @@ module.exports = class HelpCommand extends Command {
             const reactionCollector = messageSent.createReactionCollector(filter, {time: 180000})
             let commandEmbed = generateEmbed() //reset embed for embed editing
             let subMessages = undefined
-            reactionCollector.on("collect", async res => { let category = tempGroup.find(group => res.emoji.name === group.emoji) //check if the reaction is link to one
+            
+            reactionCollector.on("collect", async res => { 
+                let category = tempGroup.find(group => res.emoji.name === group.emoji) //check if the reaction is link to one
+                console.log(category.commands)
                 category.commands.forEach(command => {
+                    console.log(command)
                     commandEmbed.setTitle(`${translateHelp.__("categoryInfo")} ${category.name}`)
                     commandEmbed.addField(`**${command.name.charAt(0).toUpperCase() + command.name.slice(1)}**`, command.description.find(desc => desc.lang === lang).text)
                 })
