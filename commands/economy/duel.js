@@ -1,6 +1,5 @@
 const { Command } = require('discord.js-commando')
 const { RichEmbed } = require("discord.js")
-const moment = require("moment")
 const { checkMoney, addMoney } = require("../../function/econFunc.js")
 
 module.exports = class DuelCommand extends Command {
@@ -75,7 +74,8 @@ module.exports = class DuelCommand extends Command {
             .setDescription(`En attente de la réponse de <@${user.id}> tapez !accept pour accepter`)
             .setColor("#3498DB")
             .setThumbnail(msg.author.displayAvatarURL)
-            .setFooter(`Duel provoqué le ${moment().format("DD/MM/YYYY [à] HH:mm:ss")}`)
+            .setFooter(`Duel commencé`)
+            .setTimestamp(Date.now())
         msg.say(awaitDuelEmbed)
         const filter = m => m.author.id === user.id && m.content.startsWith("!accept")
 
@@ -95,7 +95,8 @@ module.exports = class DuelCommand extends Command {
                 const duelStart = new RichEmbed()
                     .setTitle(`${this.client.emotes.warn} Le premier à envoyer un message à partir de maintenant gagne le duel`)
                     .setDescription("Que puisse le sort vous être favorable")
-                    .setFooter(`Duel démarré à ${moment().format("DD/MM/YYYY [à] HH:mm:ss")}`)
+                    .setFooter(`Duel démarré`)
+                    .setTimestamp(Date.now())
                 msg.say(duelStart)
 
                 //Get message
@@ -121,7 +122,8 @@ module.exports = class DuelCommand extends Command {
                             ${this.client.emotes.cross} ${loser.username} vous perdez ${amount} :gem:`)
                             .setThumbnail(winner.displayAvatarURL)
                             .setColor("#3498DB")
-                            .setFooter(`Duel terminé le ${moment().format("DD/MM/YYYY [à] HH:mm:ss")}`)
+                            .setFooter(`Duel terminé`)
+                            .setTimestamp(Date.now())
                         msg.say(winEmbed)
 
                         //give and remove gems

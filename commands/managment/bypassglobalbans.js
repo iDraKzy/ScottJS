@@ -1,7 +1,6 @@
 const { Command } = require('discord.js-commando')
 const { RichEmbed } = require("discord.js")
 const mongoUtil = require("../../mongoUtil.js")
-const moment = require("moment")
 
 module.exports = class BypassCommand extends Command {
     constructor(bot) {
@@ -36,7 +35,6 @@ module.exports = class BypassCommand extends Command {
         const guild = msg.guild.id
         const db = mongoUtil.getDb()
         const guildCollection = await db.collection("guilds")
-        const currentTime = moment().format("DD/MM/YYYY [à] HH:mm:ss")
         let display
         switch(state) {
             case false:
@@ -51,7 +49,8 @@ module.exports = class BypassCommand extends Command {
             .setTitle(`${this.client.emotes.check} Les Global Bans ${display}`)
             .setColor("#34495E")
             .setThumbnail(msg.author.displayAvatarURL)
-            .setFooter(`Effectué le ${currentTime}`)
+            .setFooter(`Effectué`)
+            .setTimestamp(Date.now())
         msg.say(bypassEmbed)
     }
 }

@@ -1,7 +1,6 @@
 const { Command } = require('discord.js-commando')
 const { RichEmbed } = require("discord.js")
 const mongoUtil = require("../../mongoUtil.js")
-const moment = require("moment")
 const { addPoints } = require("../../function/levelFunc.js")
 const { addMoney } = require("../../function/econFunc.js")
 const roundTo = require("round-to")
@@ -37,7 +36,6 @@ module.exports = class ConvertCommand extends Command {
         const db = mongoUtil.getDb()
         const collection = db.collection("members")
         let userDoc = await collection.findOne({discord_id: msg.author.id})
-        let currentTime = moment().format("DD[/]MM[/]YYYY [à] HH[:]mm[:]ss")
         let currentMoney = userDoc.money
         let currentPoints = userDoc.points
         const convertErrorEmbed = new RichEmbed()
@@ -45,7 +43,8 @@ module.exports = class ConvertCommand extends Command {
             .setThumbnail(msg.author.displayAvatarURL)
             .setColor("#E74C3C")
             .addField("Votre portemonnaie", `${currentMoney} :gem:`)
-            .setFooter(`Demandé le ${currentTime}`)
+            .setFooter(`Demandé`)
+            .setTimestamp(Date.now())
         if(amount > currentMoney) {
             convertErrorEmbed.setDescription("Vous n'avez pas assez de :gem:")
             return msg.say(convertErrorEmbed)

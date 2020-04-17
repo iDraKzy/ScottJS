@@ -1,7 +1,6 @@
 const { Command } = require('discord.js-commando')
 const { RichEmbed } = require("discord.js")
 const mongoUtil = require("../../mongoUtil.js")
-const moment = require("moment")
 
 module.exports = class LanguageCommand extends Command {
     constructor(bot) {
@@ -38,7 +37,6 @@ module.exports = class LanguageCommand extends Command {
         const guild = msg.guild.id
         const db = mongoUtil.getDb()
         const guildCollection = db.collection("guilds")
-        const currentTime = moment().format("DD/MM/YYYY [à] HH:mm:ss")
         let langDisplay
         if (lang === ("fr" || "french")) {
             lang = "fr"
@@ -54,7 +52,8 @@ module.exports = class LanguageCommand extends Command {
             .setDescription(":warning: Les messages systèmes sont en anglais pour l'instant")
             .setColor("#34495E")
             .setThumbnail(msg.member.guild.iconURL)
-            .setFooter(`Effectué le ${currentTime}`)
+            .setFooter(`Effectué`)
+            .setTimestamp(Date.now())
         msg.say(changeLanguageEmbed)
     }
 }

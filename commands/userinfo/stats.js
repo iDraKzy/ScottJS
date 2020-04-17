@@ -3,9 +3,6 @@ const { RichEmbed } = require("discord.js")
 const mongoUtil = require("../../mongoUtil.js")
 const roundTo = require("round-to")
 const editDoc = require("../../function/editDoc.js")
-const moment = require("moment")
-
-
 
 
 module.exports = class StatsCommand extends Command {
@@ -50,7 +47,6 @@ module.exports = class StatsCommand extends Command {
         const db = mongoUtil.getDb()
         editDoc.checkGuild(msg.author.id, msg.member.guild.id)
         const collection = db.collection("members")
-        const currentDate = moment().format("DD/MM/YYYY [à] HH:mm:ss")
         const userDoc = await collection.findOne({"discord_id": user.id})
         let vocTime = userDoc.voc_time
         console.log(userDoc)
@@ -77,7 +73,8 @@ module.exports = class StatsCommand extends Command {
             .addField("Niveau actuel", userDoc.level, true)
             .addField("Temps passé dans un canal", vocTime)
             .addField("Gemmes actuelles", `${userDoc.money} :gem:`)
-            .setFooter(`Demandé le ${currentDate}`)
+            .setFooter(`Demandé`)
+            .setTimestamp(Date.now())
         msg.say(statsEmbed)
 
         function addZero(number) {

@@ -1,6 +1,5 @@
 const { Command } = require('discord.js-commando')
 const { RichEmbed } = require("discord.js")
-const moment = require("moment")
 const mongoUtil = require("../../mongoUtil.js")
 const i18n_module = require("i18n-nodejs")
 
@@ -104,12 +103,12 @@ module.exports = class HelpCommand extends Command {
         } else {
 
             //Send the details about one command when a command is specified
-            const currentDate = moment().format(translateHelp.__("dateFormat"))
             const commandInfoEmbed = new RichEmbed()
                 .setTitle(`${translateHelp.__("commandInfo")} ${command.name.charAt(0).toUpperCase() + command.name.slice(1)}`)
                 .setColor("#3498DB")
                 .addField("Description", command.description.find(desc => desc.lang === lang).text)
-                .setFooter(`${translateHelp.__("requested")} ${currentDate}`)
+                .setFooter(`${translateHelp.__("requested")}`)
+                .setTimestamp(Date.now())
             if (command.format != null) {
                 commandInfoEmbed.addField(translateHelp.__("usage"), command.format)
             }

@@ -55,14 +55,14 @@ module.exports = class DailiesCommand extends Command {
         if(currentDate - 1000 * 60 * 60 * 22 >= lastDailies) {
             //Give the gem if it was more than 22h since last dailies
             addMoney(msg.author.id, gemToAdd)
-            const displayDate = moment().format(translateDailies.__("dateFormat"))
             collection.updateOne({discord_id: msg.author.id}, {$set: {lastDailies: currentDate}})
             const dailiesEmbed = new RichEmbed()
                 .setTitle(translateDailies.__("rewardNameEmoji", {name: msg.author.username, emoji: this.client.emotes.check}))
                 .setColor("#3498DB")
                 .setDescription(translateDailies.__("gemReward", {gem: gemToAdd}))
                 .setThumbnail(msg.author.displayAvatarURL)
-                .setFooter(`${translateDailies.__("requested")} ${displayDate}`)
+                .setFooter(`${translateDailies.__("requested")}`)
+                .setTimestamp(Date.now())
                 .addField(translateDailies.__("gem"), `${currentGem} :gem:`)
             await msg.say(dailiesEmbed)
         } else {

@@ -7,7 +7,6 @@ const mongodb = require("mongodb")
 const levelFunc = require("./function/levelFunc.js")
 const editDoc = require("./function/editDoc.js")
 const mongoUtil = require("./mongoUtil.js")
-const moment = require("moment")
 
 mongoUtil.connectToServer((err, client) => {
   if (err) throw err
@@ -104,7 +103,8 @@ bot.on("ready", () => {
                             .setThumbnail(user.displayAvatarURL)
                             .setDescription(reminder.reason)
                             .setColor("#3498DB")
-                            .setFooter(`Message envoyé le ${moment().format("DD/MM/YYYY [à] HH:mm:ss")}`)
+                            .setFooter(`Message envoyé`)
+                            .setTimestamp(Date.now())
                         remindDMChannel.send(remindEndEmbed)
                         reminderCollection.deleteOne(reminder)
                 })

@@ -3,7 +3,6 @@ const editDoc = require("../../function/editDoc.js")
 const { addMoney } = require("../../function/econFunc")
 const { RichEmbed } = require("discord.js")
 const mongoUtil = require("../../mongoUtil.js")
-const moment = require("moment")
 
 module.exports = class GiveCommand extends commando.Command {
     constructor(client) {
@@ -44,13 +43,13 @@ module.exports = class GiveCommand extends commando.Command {
         let userDocReceiver = await collection.findOne({discord_id: receiver.id})
         let userDocGiver = await collection.findOne({discord_id: msg.author.id})
         let currentGiverMoney = userDocGiver["money"]
-        let currentTime = moment().format("DD/MM/YYYY [à] HH:mm:ss")
         //check
         let errorEmbed = new RichEmbed()
             .setTitle(`${this.client.emotes.cross} Don de ${msg.author.username}`)
             .setColor("#E74C3C")
             .setThumbnail(msg.author.displayAvatarURL)
-            .setFooter(`Demandé le ${currentTime}`)
+            .setFooter(`Demandé`)
+            .setTimestamp(Date.now())
         if(give < 1) {
             errorEmbed.setDescription("Vous ne pouvez pas faire un don d'une valeur négative")
             return msg.say(errorEmbed)

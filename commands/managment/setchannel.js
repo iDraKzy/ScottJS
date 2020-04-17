@@ -1,7 +1,6 @@
 const { Command } = require('discord.js-commando')
 const { RichEmbed } = require("discord.js")
 const mongoUtil = require("../../mongoUtil.js")
-const moment = require("moment")
 
 module.exports = class SetChannelCommand extends Command {
     constructor(bot) {
@@ -42,7 +41,6 @@ module.exports = class SetChannelCommand extends Command {
         const db = mongoUtil.getDb()
         const guildCollection = db.collection("guilds")
         const guildID = msg.guild.id
-        const currentTime = moment().format("DD[/]MM[/]YYYY [à] HH[:]mm[:]ss")
         channel = channel.toString().replace(/\D/g, '')
         let updateQuery
         switch(type) {
@@ -63,7 +61,8 @@ module.exports = class SetChannelCommand extends Command {
             .setColor("#34495E")
             .setThumbnail(msg.member.guild.iconURL)
             .setDescription(`Nouveau channel défini sur <#${channel}>`)
-            .setFooter(`Effectué le ${currentTime}`)
+            .setFooter(`Effectué`)
+            .setTimestamp(Date.now())
         msg.say(setChannelEmbed)
     }
 }

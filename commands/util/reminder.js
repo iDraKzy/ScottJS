@@ -2,7 +2,6 @@ const { Command } = require("discord.js-commando")
 const { RichEmbed } = require("discord.js")
 const mongoUtil = require("../../mongoUtil.js")
 const parsems = require("parse-ms")
-const moment = require("moment")
 
 module.exports = class ReminderCommand extends Command {
     constructor(bot) {
@@ -89,7 +88,8 @@ module.exports = class ReminderCommand extends Command {
                     .setDescription("Un message vous sera envoyé lorsque ce temps sera écoulé")
                     .addField("Temps avant envoi", displayTime)
                     .addField("Contenu du message", reason)
-                    .setFooter(`Rappel ajouté le ${moment().format("DD/MM/YYYY [à] HH:mm:ss")}`)
+                    .setFooter(`Rappel ajouté`)
+                    .setTimestamp(Date.now())
                 msg.say(reminderEmbed)
             })
             .catch(e => {

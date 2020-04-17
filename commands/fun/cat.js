@@ -2,7 +2,6 @@ const { Command } = require("discord.js-commando")
 const { RichEmbed } = require("discord.js")
 const editDoc = require("../../function/editDoc.js")
 const fetch = require("node-fetch")
-const moment = require("moment")
 
 
 module.exports = class CatCommand extends Command {
@@ -28,7 +27,6 @@ module.exports = class CatCommand extends Command {
     }
     async run(msg) {
         editDoc.checkGuild(msg.author.id, msg.member.guild.id)
-        let displayDate = moment().format("DD[/]MM[/]YYYY [à] HH[:]mm[:]ss")
 
         fetch("https://api.thecatapi.com/v1/images/search")
             .then(res => res.json())
@@ -39,7 +37,8 @@ module.exports = class CatCommand extends Command {
                     .setTitle("Voici votre chat aléatoire")
                     .setColor("#9B59B6")
                     .setImage(json[0].url)
-                    .setFooter(`Demandé le ${displayDate} par ${msg.author.username}`)
+                    .setFooter(`Demandé par ${msg.author.username}`)
+                    .setTimestamp(Date.now())
                 msg.say(catEmbed)
             })
             .catch(() => {

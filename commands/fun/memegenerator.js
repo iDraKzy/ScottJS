@@ -2,7 +2,6 @@ const { Command } = require('discord.js-commando')
 const { RichEmbed } = require("discord.js")
 const request = require("request")
 const botSettings = require("../../botsettings.json")
-const moment = require("moment")
 const fetch = require("node-fetch")
 const FormData = require("form-data")
 
@@ -117,13 +116,13 @@ module.exports = class MemeCommand extends Command {
             fetch(url + params, {method: 'POST'})
                 .then(res => res.json())
                 .then(json => {
-                    let currentDate = moment().format("DD[/]MM[/]YYYY [à] HH[:]mm[:]ss")
                     let generatedMeme = json.data.url
                     const memeEmbed = new RichEmbed()
                         .setTitle(`Voici le meme demandé par ${msg.author.username}`)
                         .setColor("#9B59B6")
                         .setImage(generatedMeme)
-                        .setFooter(`Généré le ${currentDate}`)
+                        .setFooter(`Généré`)
+                        .setTimestamp(Date.now())
                     msg.say(memeEmbed)
                 })
 
